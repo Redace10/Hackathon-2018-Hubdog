@@ -14,6 +14,9 @@ class Player:
     self.__moveUp = False
     self.__moveDown = False
 
+    self.__attack = False
+    self.__attcounter = 0
+
     self.__moveX = 0
     self.__moveY = 0
 
@@ -52,6 +55,12 @@ class Player:
 
   def getRect(self):
     return self.__rect
+
+  def setAttack(self, value):
+    self.__attack = value
+
+  def getAttack(self):
+    return self.__attack
   
   # move directions
   def setMoveLeft(self, value):
@@ -65,6 +74,12 @@ class Player:
 
   def setMoveDown(self, value):
     self.__moveDown = value
+
+  def setAllMoveFalse(self):
+    self.__moveLeft = False
+    self.__moveRight = False
+    self.__moveUp = False
+    self.__moveDown = False
 
   def getMoveLeft(self):
     return self.__moveLeft
@@ -80,10 +95,12 @@ class Player:
 
   # movement change
   def moveX(self, dir):
-    self.__moveX += dir * self.__speed
+    self.__moveX = dir * self.__speed
+    self.__rect.move_ip(self.__moveX, self.__moveY)
 
   def moveY(self, dir):
-    self.__moveY += dir * self.__speed
+    self.__moveY = dir * self.__speed
+    self.__rect.move_ip(self.__moveX, self.__moveY)
 
   def resetMoveX(self):
     self.__moveX = 0
@@ -94,4 +111,17 @@ class Player:
   def move(self):
     self.__rect.move_ip(self.__moveX, self.__moveY)
 
+  def attack(self, dir):
+    self.__attack = True
+    self.__attcounter += 1
+    self.__speed = 10
+    direction = 1
+    if (dir == 0):
+      direction = -1
+    self.moveX(direction)
+    if (self.__attcounter > 10):
+      self.__speed = 5
+      self.__attcounter = 0
+      self.__attack = False
+      #self.__rect.y += 30
   

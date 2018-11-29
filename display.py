@@ -9,7 +9,6 @@ class Display:
 
     leftImages = []
     rightImages = []
-    attackImages = []
     self.bigBanks = {}
     self.smallBanks = {}
 
@@ -48,18 +47,18 @@ class Display:
     telstra = pygame.image.load('assets/smallBank/telstra.png')
     telstra = pygame.transform.scale(telstra, (boxWidth, boxHeight))
     self.smallBanks = {"fido":fido, "tangerine":tangerine, "telstra":telstra}
-    # self.map = pygame.image.load('boss battle.png')
+    
+    self.map = pygame.image.load('assets/boss battle.png')
 
     leftImages.append(left1)
     leftImages.append(left2)
     rightImages.append(right1)
     rightImages.append(right2)
-    attackImages.append(attack1)
-    attackImages.append(attack2)
 
     self.dogImages.append(leftImages)
     self.dogImages.append(rightImages)
-    self.dogImages.append(attackImages)
+    self.dogImages.append(attack1)
+    self.dogImages.append(attack2)
 
     self.gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))
 
@@ -68,6 +67,7 @@ class Display:
       self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
 
   def drawDog(self, dog):
+    # self.gameDisplay.blit(self.map, (0, 0))
     if (self.dogIndex == 19):
       self.dogIndex = 0
 
@@ -78,8 +78,17 @@ class Display:
 
     if (dog.getMoveLeft() or dog.getMoveRight() or dog.getMoveUp() or dog.getMoveDown()):
       self.dogIndex += 1
-    dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
+    
     dog.getRect().clamp_ip(self.border)
-    self.gameDisplay.blit(dogImage, dog.getRect())
+    if (dog.getAttack()):
+      if (self.dogFace == 0):
+        dogImage = self.dogImages[2]
+      elif(self.dogFace == 1):
+        dogImage = self.dogImages[3]
+      dog.attack(self.dogFace)
+      self.gameDisplay.blit(dogImage, (dog.getRect().x, dog.getRect().y))
+    else:
+      dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
+      self.gameDisplay.blit(dogImage, dog.getRect())
     
 

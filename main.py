@@ -46,19 +46,22 @@ class Game:
       # if event.type == self.boxSpawnEvent:
       #   self.spawnBox()
 
-      if event.type == pygame.KEYDOWN:
+      if event.type == pygame.KEYDOWN and game.player.getAttack() == False:
         if event.key == pygame.K_LEFT:
-          game.player.moveX(-1)
+          game.player.setAllMoveFalse()
           game.player.setMoveLeft(True)
         if event.key == pygame.K_RIGHT:
-          game.player.moveX(1)
+          game.player.setAllMoveFalse()
           game.player.setMoveRight(True)
         if event.key == pygame.K_UP:
-          game.player.moveY(-1)
+          game.player.setAllMoveFalse()
           game.player.setMoveUp(True)
         if event.key == pygame.K_DOWN:
-          game.player.moveY(1)
+          game.player.setAllMoveFalse()
           game.player.setMoveDown(True)
+        if event.key == pygame.K_SPACE:
+          game.player.setAttack(True)
+          #game.player.setRect(game.player.getRect)
         
       elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
@@ -73,6 +76,17 @@ class Game:
         if event.key == pygame.K_DOWN:
           game.player.resetMoveY()
           game.player.setMoveDown(False)
+        # if event.key == pygame.K_DOWN:
+        #   game.player.setAttack(False)
+
+    if (game.player.getMoveLeft()):
+      game.player.moveX(-1)
+    elif (game.player.getMoveRight()):
+      game.player.moveX(1)
+    elif (game.player.getMoveUp()):
+      game.player.moveY(-1)
+    elif (game.player.getMoveDown()):
+      game.player.moveY(1)
 
   def initializeBoxes(self):
      # initialize boxes
@@ -94,7 +108,8 @@ game = Game()
 while game.keepPlaying:
   game.handleEvents()
   # game.display.drawBoxes(game.boxes)
-
-  game.player.move()
+  game.display.gameDisplay.blit(game.display.map, (0, 0))
+  pygame.draw.rect(game.display.gameDisplay, (0, 0, 255), game.player.getRect())
+  # game.player.move()
   game.display.drawDog(game.player)
   pygame.display.update()
