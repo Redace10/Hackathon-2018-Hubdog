@@ -62,3 +62,7 @@ class Display:
   def drawBoxes(self, boxes):
     for b in boxes:
       self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
+
+  def drawDog(self, dog):
+    self.gameDisplay.blit(self.dogImages[0][0], dog.getRect())
+

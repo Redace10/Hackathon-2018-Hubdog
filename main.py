@@ -2,6 +2,7 @@ import pygame
 import os
 
 from display import Display
+from player import Player
 from box import Box
 
 WIDTH = 800
@@ -20,13 +21,16 @@ class Game:
     # pygame.mixer.music.load("The Marching Pirate Spy.mp3")
     # pygame.mixer.music.play(-1, 0)
 
-    # initialize player
-    # player = Player(135, 115, 5, 0)
+    
 
     # initialize display
     self.display = Display(pygame, 135, 115, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
 
     self.initializeBoxes()
+
+    # initialize player
+    self.player = Player(135, 115, 5, 0)
+    self.player.setRect(self.display.dogImages[0][0].get_rect())
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -41,6 +45,25 @@ class Game:
         self.keepPlaying = False
       if event.type == self.boxSpawnEvent:
         self.spawnBox()
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+          game.player.setMoveLeft = True
+        if event.key == pygame.K_RIGHT:
+          game.player.setMoveRight = True
+        if event.key == pygame.K_UP:
+          game.player.setMoveUp = True
+        if event.key == pygame.K_DOWN:
+          game.player.setMoveDown = True
+        
+      elif event.type == pygame.KEYUP:
+        if event.key == pygame.K_LEFT:
+          game.player.setMoveLeft = False
+        if event.key == pygame.K_RIGHT:
+          game.player.setMoveRight = False
+        if event.key == pygame.K_UP:
+          game.player.setMoveUp = False
+        if event.key == pygame.K_DOWN:
+          game.player.setMoveDown = False
 
   def initializeBoxes(self):
      # initialize boxes
@@ -60,6 +83,8 @@ class Game:
 
 game = Game()
 while game.keepPlaying:
-  game.display.drawBoxes(game.boxes)
-  pygame.display.update()
   game.handleEvents()
+  # game.display.drawBoxes(game.boxes)
+  #dog = dog_images[0][0]
+  game.display.drawDog(game.player)
+  pygame.display.update()

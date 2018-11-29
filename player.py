@@ -7,7 +7,7 @@ class Player:
     self.__directionX = 0  # 0 = left, 1 = right
     self.__directionY = 0  # 0 = up, 1 = down
 
-    self.__rect = (width, height)
+    self.__rect = None
 
     self.__moveLeft = False
     self.__moveRight = False
