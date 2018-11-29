@@ -8,13 +8,14 @@ DOC_WIDTH = 20
 DOC_HEIGHT = 40
 
 class Box:
-  def __init__(self, size, logo, rect):
+  def __init__(self, size, logo, rect, duration):
     self.__size = size
     self.__logo = logo
     self.__rect = rect
     self.__docs = []
     self.__open = False
     self.generate_docs()
+    self.__endTime = pygame.time.get_ticks() + duration
 
   def getSize(self):
     return self.__size
@@ -44,6 +45,11 @@ class Box:
 
   def openBox(self):
     for i in range(len(self.__docs)):
-      self.__docs[i].spread(i, len(self.__docs))
+      self.__docs[i].spread(i + 1, len(self.__docs))
     self.__open = True
     return self.__docs
+
+  def shouldHide(self, currentTime):
+    if currentTime >= self.__endTime or self.__open:
+      return True
+    return False

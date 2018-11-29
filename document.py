@@ -16,14 +16,15 @@ class Document:
 
   def spread(self, dir=None, total=None):
     self.__spread = True
-    self.__spreadCounter += 1
+    speed = 5
+    self.__spreadCounter += 1*speed
     if dir != None:
       self.__dir = dir
     if total != None:
       self.__total = total
     shift = self.get_shift()
-    self.__rect.move_ip(shift[0], shift[1])
-    if (self.__spreadCounter > 30):
+    self.__rect.move_ip(shift[0]*speed, shift[1]*speed)
+    if (self.__spreadCounter > 90):
       self.__spreadCounter = 0
       self.__spread = False
 
@@ -42,4 +43,4 @@ class Document:
       return [1, -1]
     if (self.__dir == 5 and self.__total == 5):
       return [-1, -1]
-    return (0, 0)
+    return [0, 0]

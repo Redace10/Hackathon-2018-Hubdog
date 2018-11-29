@@ -17,6 +17,8 @@ CHEQUE_WIDTH = 30
 CHEQUE_HEIGHT = 15
 DOC_WIDTH = 20
 DOC_HEIGHT = 40
+PLAYER_HEIGHT = 115
+PLAYER_WIDTH = 135
 
 class Game:
   def __init__(self):
@@ -29,13 +31,13 @@ class Game:
     # pygame.mixer.music.play(-1, 0)
 
     # initialize display
-    self.display = Display(pygame, 135, 115, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
+    self.display = Display(pygame, PLAYER_WIDTH, PLAYER_HEIGHT, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
 
     self.initializeBoxes()
     self.docs = []
 
     # initialize player
-    self.player = Player(135, 115, 5, 0)
+    self.player = Player(PLAYER_WIDTH, PLAYER_HEIGHT, 5, 0)
     self.player.setRect(self.display.dogImages[0][0].get_rect())
 
     self.clock = pygame.time.Clock()
@@ -64,7 +66,6 @@ class Game:
           game.player.setMoveDown(True)
         if event.key == pygame.K_SPACE:
           game.player.setAttack(True)
-          self.docs += self.boxes[0].openBox()
           #game.player.setRect(game.player.getRect)
         
       elif event.type == pygame.KEYUP:
@@ -92,14 +93,19 @@ class Game:
     elif (game.player.getMoveDown()):
       game.player.moveY(1)
 
-
   def updateBoxes(self):
-    print('update')
+    for b in self.boxes:
+      if b.shouldHide(pygame.time.get_ticks()):
+        self.boxes.remove(b)
+      if self.player.getAttack() and self.player.getRect().colliderect(b.getRect()):
+        self.docs += b.openBox()
 
   def updateDocuments(self):
     for d in self.docs:
       if d.getSpread() == True:
         d.spread()
+      elif self.player.getRect().colliderect(d.getRect()):
+        self.docs.remove(d)
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
@@ -111,7 +117,7 @@ class Game:
         rect = pygame.Rect(randX, randY, BOX_WIDTH, BOX_HEIGHT)
         box_rects = list(map(lambda b: b.getRect(), self.boxes))
         if (rect.collidelist(box_rects) < 0):
-          self.boxes.append(Box(size, self.banks[size][logo], rect))
+          self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
           break
 
   def initializeBoxes(self):
@@ -125,23 +131,31 @@ class Game:
     self.boxSpawnEvent = pygame.USEREVENT + 1
     self.bigBoxChance = 0.2
     self.smallBoxChance = 0.8
+    self.boxDuration = 5000
 
     #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
     pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
+
+  def updateDisplay(self):
+    pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    self.display.drawBoxes(self.boxes)
+    self.display.drawDocuments(self.docs)
+    pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
+    self.display.drawDog(self.player)
+    pygame.display.update()
 
   def __del__(self):
     pygame.quit()
 
 game = Game()
 while game.keepPlaying:
+  game.updateBoxes()
   game.updateDocuments()
 
-  pygame.draw.rect(game.display.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-  game.display.drawBoxes(game.boxes)
-  game.display.drawDocuments(game.docs)
-  pygame.draw.rect(game.display.gameDisplay, (0, 0, 255), game.player.getRect())
-  game.display.drawDog(game.player)
-  pygame.display.update()
+  game.updateDisplay()
+  
   game.handleEvents()
+
+  game.clock.tick(30)
 
 quit()

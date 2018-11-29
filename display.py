@@ -112,5 +112,13 @@ class Display:
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
+
+    def drawDisplay(self, pygame):
+      pygame.draw.rect(self.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+      self.drawBoxes(game.boxes)
+      self.drawDocuments(game.docs)
+      pygame.draw.rect(self.gameDisplay, (0, 0, 255), game.player.getRect())
+      self.drawDog(game.player)
+      pygame.display.update()
     
 
