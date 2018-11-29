@@ -136,7 +136,7 @@ game = Game()
 while game.keepPlaying:
   game.updateDocuments()
 
-  game.display.gameDisplay.blit(game.display.map, (0, 0))
+  pygame.draw.rect(game.display.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
   game.display.drawBoxes(game.boxes)
   game.display.drawDocuments(game.docs)
   pygame.draw.rect(game.display.gameDisplay, (0, 0, 255), game.player.getRect())

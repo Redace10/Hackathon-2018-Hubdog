@@ -66,7 +66,7 @@ class Display:
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
     # map
-    self.map = pygame.image.load('assets/boss battle.png')
+    # self.map = pygame.image.load('assets/boss battle.png')
 
     leftImages.append(left1)
     leftImages.append(left2)
