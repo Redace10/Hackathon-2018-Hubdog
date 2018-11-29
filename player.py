@@ -75,13 +75,13 @@ class Player:
     return self.__moveDown
 
   def moveX(self, dir, border):
-    x_change = dir * self._speed
-    self._rect.move_ip(x_change, 0)
-    self._rect.clamp_ip(border)
+    x_change = dir * self.__speed
+    self.__rect.move_ip(x_change, 0)
+    self.__rect.clamp_ip(border)
 
   def moveY(self, dir, border):
-    y_change = dir * self._speed
-    self._rect.move_ip(0, y_change)
-    self._rect.clamp_ip(border)
+    y_change = dir * self.__speed
+    self.__rect.move_ip(0, y_change)
+    self.__rect.clamp_ip(border)
 
   

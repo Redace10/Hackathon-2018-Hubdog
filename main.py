@@ -39,26 +39,36 @@ while game.keepPlaying:
     if event.type == pygame.KEYDOWN:
       if event.key == pygame.K_LEFT:
         player.setDirectionX(0)
-        moveLeft = True
+        game.player.setMoveLeft = True
       if event.key == pygame.K_RIGHT:
         player.setDirectionX(1)
-        moveRight = True
+        setMoveRight = True
       if event.key == pygame.K_UP:
-        moveUp = True
+        setMoveUp = True
       if event.key == pygame.K_DOWN:
-        moveDown = True
+        setMoveDown = True
       if event.key == pygame.K_SPACE:
-        player.attack(game_border)
+        player.attack(game.display.border)
       
     elif event.type == pygame.KEYUP:
       if event.key == pygame.K_LEFT:
-        moveLeft = False
+        setMoveLeft = False
       if event.key == pygame.K_RIGHT:
-        moveRight = False
+        setMoveRight = False
       if event.key == pygame.K_UP:
-        moveUp = False
+        setMoveUp = False
       if event.key == pygame.K_DOWN:
-        moveDown = False
+        setMoveDown = False
+
+      # Player setMovement
+  if (game.player.getMoveRight):
+    game.player.moveX(1, game.display.border)
+  if (game.player.getMoveLeft):
+    game.player.moveX(-1, game.display.border)
+  if (game.player.getMoveUp):
+    game.player.moveY(-1, game.display.border)
+  if (game.player.getMoveDown):
+    game.player.moveY(1, game.display.border)
   
   # Walking animation
   index = 0

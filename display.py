@@ -3,6 +3,8 @@ import pygame
 class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight):
     self.dogImages = []
+    self.border = (0, 108, 800, 415)
+
     leftImages = []
     rightImages = []
     attackImages = []
