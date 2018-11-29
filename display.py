@@ -2,6 +2,7 @@ import pygame
 
 class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
+    self.border = (0, 108, 800, 415)
     self.dogImages = []
     leftImages = []
     rightImages = []
@@ -64,5 +65,6 @@ class Display:
       self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
 
   def drawDog(self, dog):
+    dog.getRect().clamp_ip(self.border)
     self.gameDisplay.blit(self.dogImages[0][0], dog.getRect())
 

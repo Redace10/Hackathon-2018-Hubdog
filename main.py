@@ -43,26 +43,35 @@ class Game:
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.keepPlaying = False
-      if event.type == self.boxSpawnEvent:
-        self.spawnBox()
+      # if event.type == self.boxSpawnEvent:
+      #   self.spawnBox()
+
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
+          game.player.moveX(-1)
           game.player.setMoveLeft = True
         if event.key == pygame.K_RIGHT:
+          game.player.moveX(1)
           game.player.setMoveRight = True
         if event.key == pygame.K_UP:
+          game.player.moveY(-1)
           game.player.setMoveUp = True
         if event.key == pygame.K_DOWN:
+          game.player.moveY(1)
           game.player.setMoveDown = True
         
       elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
+          game.player.resetMoveX()
           game.player.setMoveLeft = False
         if event.key == pygame.K_RIGHT:
+          game.player.resetMoveX()
           game.player.setMoveRight = False
         if event.key == pygame.K_UP:
+          game.player.resetMoveY()
           game.player.setMoveUp = False
         if event.key == pygame.K_DOWN:
+          game.player.resetMoveY()
           game.player.setMoveDown = False
 
   def initializeBoxes(self):
@@ -85,6 +94,17 @@ game = Game()
 while game.keepPlaying:
   game.handleEvents()
   # game.display.drawBoxes(game.boxes)
-  #dog = dog_images[0][0]
+
+
+  # # Player movement
+  # if (game.player.getMoveRight):
+  #   game.player.moveX(1)
+  # if (game.player.getMoveLeft):
+  #   game.player.moveX(-1)
+  # if (game.player.getMoveUp):
+  #   game.player.moveY(-1)
+  # if (game.player.getMoveDown):
+  #   game.player.moveY(1)
+  game.player.move()
   game.display.drawDog(game.player)
   pygame.display.update()

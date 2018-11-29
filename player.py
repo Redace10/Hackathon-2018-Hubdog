@@ -14,6 +14,9 @@ class Player:
     self.__moveUp = False
     self.__moveDown = False
 
+    self.__moveX = 0
+    self.__moveY = 0
+
   def setWidth(self, value):
     self.__width = value
 
@@ -75,11 +78,18 @@ class Player:
     return self.__moveDown
 
   def moveX(self, dir):
-    x_change = dir * self.__speed
-    self.__rect.move_ip(x_change, 0)
+    self.__moveX += dir * self.__speed
 
   def moveY(self, dir):
-    y_change = dir * self.__speed
-    self.__rect.move_ip(0, y_change)
+    self.__moveY += dir * self.__speed
+
+  def resetMoveX(self):
+    self.__moveX = 0
+
+  def resetMoveY(self):
+    self.__moveY = 0
+
+  def move(self):
+    self.__rect.move_ip(self.__moveX, self.__moveY)
 
   
