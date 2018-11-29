@@ -4,6 +4,7 @@ class Document:
     self.__rect = rect
     self.__spread = False
     self.__spreadCounter = 0
+    self.__endTime = 0
 
   def getSpread(self):
     return self.__spread
@@ -13,6 +14,14 @@ class Document:
 
   def getRect(self):
     return self.__rect
+
+  def setDuration(self, currentTime, duration):
+    self.__endTime = currentTime + duration
+
+  def shouldHide(self, currentTime):
+    if currentTime >= self.__endTime:
+      return True
+    return False
 
   def spread(self, dir=None, total=None):
     self.__spread = True

@@ -1,11 +1,7 @@
 from document import Document
 import random
 import pygame
-
-CHEQUE_WIDTH = 30
-CHEQUE_HEIGHT = 15
-DOC_WIDTH = 20
-DOC_HEIGHT = 40
+import GLOBAL
 
 class Box:
   def __init__(self, size, logo, rect, duration):
@@ -16,6 +12,7 @@ class Box:
     self.__open = False
     self.generate_docs()
     self.__endTime = pygame.time.get_ticks() + duration
+    self.docDuration = 7000
 
   def getSize(self):
     return self.__size
@@ -37,9 +34,9 @@ class Box:
     for d in range (numberDoc):
       format = random.choice(['cheque', 'invoice', 'pdf'])
       if (format == 'cheque'):
-        rect = pygame.Rect(self.__rect.x, self.__rect.y, CHEQUE_WIDTH, CHEQUE_HEIGHT)
+        rect = pygame.Rect(self.__rect.x, self.__rect.y, GLOBAL.CHEQUE_WIDTH, GLOBAL.CHEQUE_HEIGHT)
       else:
-        rect = pygame.Rect(self.__rect.x, self.__rect.y, DOC_WIDTH, DOC_HEIGHT)
+        rect = pygame.Rect(self.__rect.x, self.__rect.y, GLOBAL.DOC_WIDTH, GLOBAL.DOC_HEIGHT)
       doc = Document(format, rect)
       self.__docs.append(doc)
 

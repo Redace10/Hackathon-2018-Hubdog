@@ -2,23 +2,11 @@ import pygame
 import os
 import random
 import numpy as np
+import GLOBAL
 
 from display import Display
 from player import Player
 from box import Box
-
-WIDTH = 1000
-HEIGHT = 800
-
-BOX_WIDTH = 60
-BOX_HEIGHT = 60
-BOX_DIST = 10
-CHEQUE_WIDTH = 30
-CHEQUE_HEIGHT = 15
-DOC_WIDTH = 20
-DOC_HEIGHT = 40
-PLAYER_HEIGHT = 100
-PLAYER_WIDTH = 120
 
 class Game:
   def __init__(self):
@@ -31,13 +19,14 @@ class Game:
     # pygame.mixer.music.play(-1, 0)
 
     # initialize display
-    self.display = Display(pygame, PLAYER_WIDTH, PLAYER_HEIGHT, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
+    self.display = Display(pygame)
 
     self.initializeBoxes()
     self.docs = []
+    self.docDuration = 7000
 
     # initialize player
-    self.player = Player(PLAYER_WIDTH, PLAYER_HEIGHT, 5, 0)
+    self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
     self.player.setRect(self.display.dogImages[0][0].get_rect())
 
     self.clock = pygame.time.Clock()
@@ -91,7 +80,10 @@ class Game:
       if b.shouldHide(pygame.time.get_ticks()):
         self.boxes.remove(b)
       if self.player.getAttack() and self.player.getRect().colliderect(b.getRect()):
-        self.docs += b.openBox()
+        docs = b.openBox()
+        for d in docs:
+          d.setDuration(pygame.time.get_ticks(), self.docDuration)
+          self.docs.append(d)
 
   def updateDocuments(self):
     for d in self.docs:
@@ -99,15 +91,17 @@ class Game:
         d.spread()
       elif self.player.getRect().colliderect(d.getRect()):
         self.docs.remove(d)
+      if d.shouldHide(pygame.time.get_ticks()):
+        self.docs.remove(d)
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
       size = np.random.choice(['B', 'S'], 1, replace=False, p=[self.bigBoxChance, self.smallBoxChance])[0]
       logo = random.randint(0, len(self.banks[size]) - 1)
       while True:
-        randX = random.randint(10, WIDTH - 10 - BOX_WIDTH)
-        randY = random.randint(10, HEIGHT - 10 - BOX_HEIGHT)
-        rect = pygame.Rect(randX, randY, BOX_WIDTH, BOX_HEIGHT)
+        randX = random.randint(30, GLOBAL.MAP_WIDTH - 30 - GLOBAL.BOX_WIDTH)
+        randY = random.randint(30, GLOBAL.MAP_HEIGHT - 80 - GLOBAL.BOX_HEIGHT)
+        rect = pygame.Rect(randX, randY, GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT)
         box_rects = list(map(lambda b: b.getRect(), self.boxes))
         if (rect.collidelist(box_rects) < 0):
           self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
@@ -130,7 +124,7 @@ class Game:
     pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
 
   def updateDisplay(self):
-    pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
     self.display.drawDocuments(self.docs)
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())

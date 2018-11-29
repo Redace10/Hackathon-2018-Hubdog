@@ -1,13 +1,9 @@
 import pygame
-
-CHEQUE_WIDTH = 30
-CHEQUE_HEIGHT = 15
-DOC_WIDTH = 20
-DOC_HEIGHT = 40
+import GLOBAL
 
 class Display:
-  def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
-    self.border = (0, 10, mapWidth, mapHeight - 50)
+  def __init__(self, pygame):
+    self.border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
@@ -19,49 +15,49 @@ class Display:
 
     left1 = pygame.image.load('assets/move/left1.png')
     left2 = pygame.image.load('assets/move/left2.png')
-    left1 = pygame.transform.scale(left1, (playerWidth, playerHeight))
-    left2 = pygame.transform.scale(left2, (playerWidth, playerHeight))
+    left1 = pygame.transform.scale(left1, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
+    left2 = pygame.transform.scale(left2, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
 
     right1 = pygame.image.load('assets/move/right1.png')
     right2 = pygame.image.load('assets/move/right2.png')
-    right1 = pygame.transform.scale(right1, (playerWidth, playerHeight))
-    right2 = pygame.transform.scale(right2, (playerWidth, playerHeight))
+    right1 = pygame.transform.scale(right1, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
+    right2 = pygame.transform.scale(right2, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
 
     attack1 = pygame.image.load('assets/attack/attackLeft.png')
     attack2 = pygame.image.load('assets/attack/attackRight.png')
-    attack1 = pygame.transform.scale(attack1, (playerWidth, playerHeight))
-    attack2 = pygame.transform.scale(attack2, (playerWidth, playerHeight))
+    attack1 = pygame.transform.scale(attack1, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
+    attack2 = pygame.transform.scale(attack2, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
 
     # box assets:
     amex = pygame.image.load('assets/bigBank/amex.png')
-    amex = pygame.transform.scale(amex, (boxWidth, boxHeight))
+    amex = pygame.transform.scale(amex, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     bmo = pygame.image.load('assets/bigBank/bmo.png')
-    bmo = pygame.transform.scale(bmo, (boxWidth, boxHeight))
+    bmo = pygame.transform.scale(bmo, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     chase = pygame.image.load('assets/bigBank/chase.png')
-    chase = pygame.transform.scale(chase, (boxWidth, boxHeight))
+    chase = pygame.transform.scale(chase, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     td = pygame.image.load('assets/bigBank/td.png')
-    td = pygame.transform.scale(td, (boxWidth, boxHeight))
+    td = pygame.transform.scale(td, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     wellsFargo = pygame.image.load('assets/bigBank/wellsFargo.png')
-    wellsFargo = pygame.transform.scale(wellsFargo, (boxWidth, boxHeight))
+    wellsFargo = pygame.transform.scale(wellsFargo, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     bigBanks = {'amex':amex, 'bmo':bmo, 'chase':chase, 'td':td, 'wellsFargo':wellsFargo}
     
     fido = pygame.image.load('assets/smallBank/fido.png')
-    fido = pygame.transform.scale(fido, (boxWidth, boxHeight))
+    fido = pygame.transform.scale(fido, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     tangerine = pygame.image.load('assets/smallBank/tangerine.png')
-    tangerine = pygame.transform.scale(tangerine, (boxWidth, boxHeight))
+    tangerine = pygame.transform.scale(tangerine, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     telstra = pygame.image.load('assets/smallBank/telstra.png')
-    telstra = pygame.transform.scale(telstra, (boxWidth, boxHeight))
+    telstra = pygame.transform.scale(telstra, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     smallBanks = {'fido':fido, 'tangerine':tangerine, 'telstra':telstra}
 
     self.banks = {'B':bigBanks, 'S':smallBanks}
 
     # Document assets
     cheque = pygame.image.load('assets/document/cheque.png')
-    cheque = pygame.transform.scale(cheque, (CHEQUE_WIDTH, CHEQUE_HEIGHT))
+    cheque = pygame.transform.scale(cheque, (GLOBAL.CHEQUE_WIDTH, GLOBAL.CHEQUE_HEIGHT))
     invoice = pygame.image.load('assets/document/invoice.png')
-    invoice = pygame.transform.scale(invoice, (DOC_WIDTH, DOC_HEIGHT))
+    invoice = pygame.transform.scale(invoice, (GLOBAL.DOC_WIDTH, GLOBAL.DOC_HEIGHT))
     pdf = pygame.image.load('assets/document/pdf.png')
-    pdf = pygame.transform.scale(pdf, (DOC_WIDTH, DOC_HEIGHT))
+    pdf = pygame.transform.scale(pdf, (GLOBAL.DOC_WIDTH, GLOBAL.DOC_HEIGHT))
 
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
@@ -78,7 +74,7 @@ class Display:
     self.dogImages.append(attack1)
     self.dogImages.append(attack2)
 
-    self.gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))
+    self.gameDisplay = pygame.display.set_mode((GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
 
   def drawBoxes(self, boxes):
     for b in boxes:
@@ -112,13 +108,5 @@ class Display:
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
-
-    def drawDisplay(self, pygame):
-      pygame.draw.rect(self.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-      self.drawBoxes(game.boxes)
-      self.drawDocuments(game.docs)
-      pygame.draw.rect(self.gameDisplay, (0, 0, 255), game.player.getRect())
-      self.drawDog(game.player)
-      pygame.display.update()
     
 

@@ -3,6 +3,7 @@ class Player:
     self.__width = width
     self.__height = height
     self.__speed = speed
+    self.__initialSpeed = speed
     
     self.__directionX = 0  # 0 = left, 1 = right
     self.__directionY = 0  # 0 = up, 1 = down
@@ -111,13 +112,13 @@ class Player:
   def attack(self, dir):
     self.__attack = True
     self.__attcounter += 1
-    self.__speed = 10
+    self.__speed = self.__initialSpeed * 2
     direction = 1
     if (dir == 0):
       direction = -1
     self.moveX(direction)
-    if (self.__attcounter > 10):
-      self.__speed = 5
+    if (self.__attcounter > 5):
+      self.__speed = self.__initialSpeed
       self.__attcounter = 0
       self.__attack = False
       self.resetMoveX()
