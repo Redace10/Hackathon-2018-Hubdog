@@ -9,8 +9,8 @@ from box import Box
 WIDTH = 800
 HEIGHT = 600
 
-BOX_WIDTH = 70
-BOX_HEIGHT = 70
+BOX_WIDTH = 60
+BOX_HEIGHT = 60
 BOX_DIST = 10
 
 class Game:
