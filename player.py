@@ -96,20 +96,17 @@ class Player:
   # movement change
   def moveX(self, dir):
     self.__moveX = dir * self.__speed
-    self.__rect.move_ip(self.__moveX, self.__moveY)
+    self.__rect.move_ip(self.__moveX, 0)
 
   def moveY(self, dir):
     self.__moveY = dir * self.__speed
-    self.__rect.move_ip(self.__moveX, self.__moveY)
+    self.__rect.move_ip(0, self.__moveY)
 
   def resetMoveX(self):
     self.__moveX = 0
 
   def resetMoveY(self):
     self.__moveY = 0
-
-  def move(self):
-    self.__rect.move_ip(self.__moveX, self.__moveY)
 
   def attack(self, dir):
     self.__attack = True
@@ -123,5 +120,6 @@ class Player:
       self.__speed = 5
       self.__attcounter = 0
       self.__attack = False
-      #self.__rect.y += 30
+      self.resetMoveX()
+      self.resetMoveY()
   
