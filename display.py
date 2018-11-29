@@ -1,13 +1,13 @@
 import pygame
 
 class Display:
-  def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight):
+  def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
     self.dogImages = []
-    self.border = (0, 108, 800, 415)
-
     leftImages = []
     rightImages = []
     attackImages = []
+    self.bigBanks = {}
+    self.smallBanks = {}
 
     left1 = pygame.image.load('assets/move/left1.png')
     left2 = pygame.image.load('assets/move/left2.png')
@@ -24,6 +24,26 @@ class Display:
     attack1 = pygame.transform.scale(attack1, (playerWidth, playerHeight))
     attack2 = pygame.transform.scale(attack2, (playerWidth, playerHeight))
 
+    # box assets:
+    amex = pygame.image.load('assets/bigBank/amex.png')
+    amex = pygame.transform.scale(amex, (boxWidth, boxHeight))
+    bmo = pygame.image.load('assets/bigBank/bmo.png')
+    bmo = pygame.transform.scale(bmo, (boxWidth, boxHeight))
+    chase = pygame.image.load('assets/bigBank/chase.png')
+    chase = pygame.transform.scale(chase, (boxWidth, boxHeight))
+    td = pygame.image.load('assets/bigBank/td.png')
+    td = pygame.transform.scale(td, (boxWidth, boxHeight))
+    wellsFargo = pygame.image.load('assets/bigBank/wellsFargo.png')
+    wellsFargo = pygame.transform.scale(wellsFargo, (boxWidth, boxHeight))
+    self.bigBanks = {"amex":amex, "bmo":bmo, "chase":chase, "td":td, "wellsFargo":wellsFargo}
+    
+    fido = pygame.image.load('assets/smallBank/fido.png')
+    fido = pygame.transform.scale(fido, (boxWidth, boxHeight))
+    tangerine = pygame.image.load('assets/smallBank/tangerine.png')
+    tangerine = pygame.transform.scale(tangerine, (boxWidth, boxHeight))
+    telstra = pygame.image.load('assets/smallBank/telstra.png')
+    telstra = pygame.transform.scale(telstra, (boxWidth, boxHeight))
+    self.smallBanks = {"fido":fido, "tangerine":tangerine, "telstra":telstra}
     # self.map = pygame.image.load('boss battle.png')
 
     leftImages.append(left1)
@@ -39,6 +59,6 @@ class Display:
 
     self.gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))
 
-  def updateDog(self, rect):
-    self.gameDisplay.blit(dog, rect)
-
+  def drawBoxes(self, boxes):
+    for b in boxes:
+      self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
