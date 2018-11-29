@@ -7,7 +7,7 @@ DOC_HEIGHT = 40
 
 class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
-    self.border = (0, 10, 800, 550)
+    self.border = (0, 10, mapWidth, mapHeight - 50)
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0

@@ -7,8 +7,8 @@ from display import Display
 from player import Player
 from box import Box
 
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 1000
+HEIGHT = 800
 
 BOX_WIDTH = 60
 BOX_HEIGHT = 60
