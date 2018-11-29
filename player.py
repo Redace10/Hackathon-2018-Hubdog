@@ -7,9 +7,12 @@ class Player:
     self.__directionX = 0  # 0 = left, 1 = right
     self.__directionY = 0  # 0 = up, 1 = down
 
-    self.__attack = False
-    self.__attcounter = 0
     self.__rect = (width, height)
+
+    self.__moveLeft = False
+    self.__moveRight = False
+    self.__moveUp = False
+    self.__moveDown = False
 
   def setWidth(self, value):
     self.__width = value
@@ -46,20 +49,30 @@ class Player:
 
   def getRect(self):
     return self.__rect
+  
+  def setMoveLeft(self, value):
+    self.__moveLeft = value
 
-  def attack(self, border):
-    self._attack = True
-    self._attcounter += 1
-    self._speed = 10
-    movement = (self._direction * 2) - 1
-    self.move_x(movement, border)
-    if (self._attcounter > 10):
-      self._speed = 5
-      self._attcounter = 0
-      self._attack = False
+  def setMoveRight(self, value):
+    self.__moveRight = value
 
-  def getAttack(self):
-    return self.__attack
+  def setMoveUp(self, value):
+    self.__moveUp = value
+
+  def setMoveDown(self, value):
+    self.__moveDown = value
+  
+  def getMoveLeft(self):
+    return self.__moveLeft
+
+  def getMoveRight(self):
+    return self.__moveRight
+
+  def getMoveUp(self):
+    return self.__moveUp
+
+  def getMoveDown(self):
+    return self.__moveDown
 
   def moveX(self, dir, border):
     x_change = dir * self._speed
