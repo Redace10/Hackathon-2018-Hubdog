@@ -4,6 +4,9 @@ class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
     self.border = (0, 108, 800, 415)
     self.dogImages = []
+    self.dogIndex = 0
+    self.dogFace = 0
+
     leftImages = []
     rightImages = []
     attackImages = []
@@ -65,6 +68,18 @@ class Display:
       self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
 
   def drawDog(self, dog):
+    if (self.dogIndex == 19):
+      self.dogIndex = 0
+
+    if (dog.getMoveLeft()):
+      self.dogFace = 0
+    elif (dog.getMoveRight()):
+      self.dogFace = 1
+
+    if (dog.getMoveLeft() or dog.getMoveRight() or dog.getMoveUp() or dog.getMoveDown()):
+      self.dogIndex += 1
+    dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
     dog.getRect().clamp_ip(self.border)
-    self.gameDisplay.blit(self.dogImages[0][0], dog.getRect())
+    self.gameDisplay.blit(dogImage, dog.getRect())
+    
 

@@ -53,6 +53,7 @@ class Player:
   def getRect(self):
     return self.__rect
   
+  # move directions
   def setMoveLeft(self, value):
     self.__moveLeft = value
 
@@ -64,7 +65,7 @@ class Player:
 
   def setMoveDown(self, value):
     self.__moveDown = value
-  
+
   def getMoveLeft(self):
     return self.__moveLeft
 
@@ -77,6 +78,7 @@ class Player:
   def getMoveDown(self):
     return self.__moveDown
 
+  # movement change
   def moveX(self, dir):
     self.__moveX += dir * self.__speed
 
