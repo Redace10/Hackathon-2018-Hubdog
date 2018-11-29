@@ -35,4 +35,4 @@ class Display:
     self.dogImages.append(rightImages)
     self.dogImages.append(attackImages)
 
-    gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))
+    self.gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))

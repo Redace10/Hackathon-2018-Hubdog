@@ -9,7 +9,7 @@ class Player:
 
     self.__attack = False
     self.__attcounter = 0
-    self.__rect = None
+    self.__rect = (width, height)
 
   def setWidth(self, value):
     self.__width = value
@@ -42,10 +42,10 @@ class Player:
     return self.__directionY
 
   def setRect(self, value):
-    self._rect = value
+    self.__rect = value
 
   def getRect(self):
-    return self._rect
+    return self.__rect
 
   def attack(self, border):
     self._attack = True
