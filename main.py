@@ -2,9 +2,13 @@ import pygame
 import os
 
 from display import Display
+from box import Box
 
 WIDTH = 800
 HEIGHT = 600
+
+BOX_WIDTH = 70
+BOX_HEIGHT = 70
 
 class Game:
   def __init__(self):
@@ -20,11 +24,38 @@ class Game:
     # player = Player(135, 115, 5, 0)
 
     # initialize display
-    self.display = Display(pygame, 135, 115, WIDTH, HEIGHT)
+    self.display = Display(pygame, 135, 115, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
 
-    
+    # initialize boxes
+    bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
+    smallBanks = ['fido', 'tangerine', 'telstra']
+    self.banks = {'B':bigBanks, 'S':smallBanks}
+    self.boxes = []
+    # i.e spawn {boxSpawnRate} boxes every {boxSpawnFrequency} seconds
+    self.boxSpawnRate = 3
+    self.boxSpawnFrequency = 5000
+    self.boxSpawnEvent = pygame.USEREVENT + 1
+    self.boxes.append(Box('B', 'bmo', (200, 50, BOX_WIDTH, BOX_HEIGHT)))
+    pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
 
+  def spawnBox(self):
+    for i in range(self.boxSpawnRate):
+      print('spawnBox')
+
+  def checkIfDone(self):
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        self.keepPlaying = False
+      if event.type == self.boxSpawnEvent:
+        self.spawnBox()
+
+  def __del__(self):
+    pygame.quit()
+
 game = Game()
 while game.keepPlaying:
+  game.display.drawBoxes(game.boxes)
+  pygame.display.update()
+  game.checkIfDone()
