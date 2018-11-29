@@ -1,13 +1,18 @@
 import pygame
 
+CHEQUE_WIDTH = 30
+CHEQUE_HEIGHT = 15
+DOC_WIDTH = 20
+DOC_HEIGHT = 40
+
 class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
     self.dogImages = []
     leftImages = []
     rightImages = []
     attackImages = []
-    self.bigBanks = {}
-    self.smallBanks = {}
+    bigBanks = {}
+    smallBanks = {}
 
     left1 = pygame.image.load('assets/move/left1.png')
     left2 = pygame.image.load('assets/move/left2.png')
@@ -47,6 +52,15 @@ class Display:
 
     self.banks = {'B':bigBanks, 'S':smallBanks}
     # self.map = pygame.image.load('boss battle.png')
+    # Document assets
+    cheque = pygame.image.load('assets/document/cheque.png')
+    cheque = pygame.transform.scale(cheque, (CHEQUE_WIDTH, CHEQUE_HEIGHT))
+    invoice = pygame.image.load('assets/document/invoice.png')
+    invoice = pygame.transform.scale(invoice, (DOC_WIDTH, DOC_HEIGHT))
+    pdf = pygame.image.load('assets/document/pdf.png')
+    pdf = pygame.transform.scale(pdf, (DOC_WIDTH, DOC_HEIGHT))
+
+    self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
     leftImages.append(left1)
     leftImages.append(left2)
@@ -64,3 +78,7 @@ class Display:
   def drawBoxes(self, boxes):
     for b in boxes:
       self.gameDisplay.blit(self.banks[b.getSize()][b.getLogo()], b.getRect())
+
+  def drawDocuments(self, docs):
+    for d in docs:
+      self.gameDisplay.blit(self.documents[d.getFormat()], d.getRect())

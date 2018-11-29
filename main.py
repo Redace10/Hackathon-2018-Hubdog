@@ -12,6 +12,10 @@ HEIGHT = 600
 BOX_WIDTH = 60
 BOX_HEIGHT = 60
 BOX_DIST = 10
+CHEQUE_WIDTH = 30
+CHEQUE_HEIGHT = 15
+DOC_WIDTH = 20
+DOC_HEIGHT = 40
 
 class Game:
   def __init__(self):
@@ -30,9 +34,29 @@ class Game:
     self.display = Display(pygame, 135, 115, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
 
     self.initializeBoxes()
+    self.docs = []
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
+
+  def handleEvents(self):
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        self.keepPlaying = False
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_UP:
+          for b in self.boxes:
+            self.docs += b.openBox()
+      if event.type == self.boxSpawnEvent:
+        self.spawnBox()
+
+  def updateBoxes(self):
+    print('update')
+
+  def updateDocuments(self):
+    for d in self.docs:
+      if d.getSpread() == True:
+        d.spread()
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
@@ -47,13 +71,6 @@ class Game:
           self.boxes.append(Box(size, self.banks[size][logo], rect))
           break
 
-  def handleEvents(self):
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        self.keepPlaying = False
-      if event.type == self.boxSpawnEvent:
-        self.spawnBox()
-
   def initializeBoxes(self):
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
     smallBanks = ['fido', 'tangerine', 'telstra']
@@ -61,7 +78,7 @@ class Game:
     self.boxes = []
     # i.e spawn {boxSpawnRate} boxes every {boxSpawnFrequency} seconds
     self.boxSpawnRate = 3
-    self.boxSpawnFrequency = 5000
+    self.boxSpawnFrequency = 2000
     self.boxSpawnEvent = pygame.USEREVENT + 1
     self.bigBoxChance = 0.2
     self.smallBoxChance = 0.8
@@ -74,6 +91,11 @@ class Game:
 
 game = Game()
 while game.keepPlaying:
+  game.updateDocuments()
+
   game.display.drawBoxes(game.boxes)
+  game.display.drawDocuments(game.docs)
   pygame.display.update()
   game.handleEvents()
+
+quit()
