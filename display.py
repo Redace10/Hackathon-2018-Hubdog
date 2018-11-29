@@ -1,16 +1,21 @@
 import pygame
 
+CHEQUE_WIDTH = 30
+CHEQUE_HEIGHT = 15
+DOC_WIDTH = 20
+DOC_HEIGHT = 40
+
 class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
-    self.border = (0, 108, 800, 415)
+    self.border = (0, 10, 800, 550)
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
 
     leftImages = []
     rightImages = []
-    self.bigBanks = {}
-    self.smallBanks = {}
+    bigBanks = {}
+    smallBanks = {}
 
     left1 = pygame.image.load('assets/move/left1.png')
     left2 = pygame.image.load('assets/move/left2.png')
@@ -38,7 +43,7 @@ class Display:
     td = pygame.transform.scale(td, (boxWidth, boxHeight))
     wellsFargo = pygame.image.load('assets/bigBank/wellsFargo.png')
     wellsFargo = pygame.transform.scale(wellsFargo, (boxWidth, boxHeight))
-    self.bigBanks = {"amex":amex, "bmo":bmo, "chase":chase, "td":td, "wellsFargo":wellsFargo}
+    bigBanks = {'amex':amex, 'bmo':bmo, 'chase':chase, 'td':td, 'wellsFargo':wellsFargo}
     
     fido = pygame.image.load('assets/smallBank/fido.png')
     fido = pygame.transform.scale(fido, (boxWidth, boxHeight))
@@ -46,8 +51,21 @@ class Display:
     tangerine = pygame.transform.scale(tangerine, (boxWidth, boxHeight))
     telstra = pygame.image.load('assets/smallBank/telstra.png')
     telstra = pygame.transform.scale(telstra, (boxWidth, boxHeight))
-    self.smallBanks = {"fido":fido, "tangerine":tangerine, "telstra":telstra}
-    
+    smallBanks = {'fido':fido, 'tangerine':tangerine, 'telstra':telstra}
+
+    self.banks = {'B':bigBanks, 'S':smallBanks}
+
+    # Document assets
+    cheque = pygame.image.load('assets/document/cheque.png')
+    cheque = pygame.transform.scale(cheque, (CHEQUE_WIDTH, CHEQUE_HEIGHT))
+    invoice = pygame.image.load('assets/document/invoice.png')
+    invoice = pygame.transform.scale(invoice, (DOC_WIDTH, DOC_HEIGHT))
+    pdf = pygame.image.load('assets/document/pdf.png')
+    pdf = pygame.transform.scale(pdf, (DOC_WIDTH, DOC_HEIGHT))
+
+    self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
+
+    # map
     self.map = pygame.image.load('assets/boss battle.png')
 
     leftImages.append(left1)
@@ -64,7 +82,11 @@ class Display:
 
   def drawBoxes(self, boxes):
     for b in boxes:
-      self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
+      self.gameDisplay.blit(self.banks[b.getSize()][b.getLogo()], b.getRect())
+
+  def drawDocuments(self, docs):
+    for d in docs:
+      self.gameDisplay.blit(self.documents[d.getFormat()], d.getRect())
 
   def drawDog(self, dog):
     # self.gameDisplay.blit(self.map, (0, 0))
