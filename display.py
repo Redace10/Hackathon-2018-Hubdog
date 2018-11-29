@@ -36,3 +36,7 @@ class Display:
     self.dogImages.append(attackImages)
 
     self.gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))
+
+  def updateDog(self, rect):
+    self.gameDisplay.blit(dog, rect)
+
