@@ -1,5 +1,7 @@
 import pygame
 import os
+import random
+import numpy as np
 
 from display import Display
 from box import Box
@@ -9,6 +11,7 @@ HEIGHT = 600
 
 BOX_WIDTH = 70
 BOX_HEIGHT = 70
+BOX_DIST = 10
 
 class Game:
   def __init__(self):
@@ -33,7 +36,16 @@ class Game:
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
-      print('spawnBox')
+      size = np.random.choice(['B', 'S'], 1, replace=False, p=[self.bigBoxChance, self.smallBoxChance])[0]
+      logo = random.randint(0, len(self.banks[size]) - 1)
+      while True:
+        randX = random.randint(10, WIDTH - 10 - BOX_WIDTH)
+        randY = random.randint(10, HEIGHT - 10 - BOX_HEIGHT)
+        rect = pygame.Rect(randX, randY, BOX_WIDTH, BOX_HEIGHT)
+        box_rects = list(map(lambda b: b.getRect(), self.boxes))
+        if (rect.collidelist(box_rects) < 0):
+          self.boxes.append(Box(size, self.banks[size][logo], rect))
+          break
 
   def handleEvents(self):
     for event in pygame.event.get():
@@ -43,7 +55,6 @@ class Game:
         self.spawnBox()
 
   def initializeBoxes(self):
-     # initialize boxes
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
     smallBanks = ['fido', 'tangerine', 'telstra']
     self.banks = {'B':bigBanks, 'S':smallBanks}
@@ -52,7 +63,10 @@ class Game:
     self.boxSpawnRate = 3
     self.boxSpawnFrequency = 5000
     self.boxSpawnEvent = pygame.USEREVENT + 1
-    self.boxes.append(Box('B', 'bmo', (200, 50, BOX_WIDTH, BOX_HEIGHT)))
+    self.bigBoxChance = 0.2
+    self.smallBoxChance = 0.8
+
+    #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
     pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
 
   def __del__(self):

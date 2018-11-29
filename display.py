@@ -35,7 +35,7 @@ class Display:
     td = pygame.transform.scale(td, (boxWidth, boxHeight))
     wellsFargo = pygame.image.load('assets/bigBank/wellsFargo.png')
     wellsFargo = pygame.transform.scale(wellsFargo, (boxWidth, boxHeight))
-    self.bigBanks = {"amex":amex, "bmo":bmo, "chase":chase, "td":td, "wellsFargo":wellsFargo}
+    bigBanks = {'amex':amex, 'bmo':bmo, 'chase':chase, 'td':td, 'wellsFargo':wellsFargo}
     
     fido = pygame.image.load('assets/smallBank/fido.png')
     fido = pygame.transform.scale(fido, (boxWidth, boxHeight))
@@ -43,7 +43,9 @@ class Display:
     tangerine = pygame.transform.scale(tangerine, (boxWidth, boxHeight))
     telstra = pygame.image.load('assets/smallBank/telstra.png')
     telstra = pygame.transform.scale(telstra, (boxWidth, boxHeight))
-    self.smallBanks = {"fido":fido, "tangerine":tangerine, "telstra":telstra}
+    smallBanks = {'fido':fido, 'tangerine':tangerine, 'telstra':telstra}
+
+    self.banks = {'B':bigBanks, 'S':smallBanks}
     # self.map = pygame.image.load('boss battle.png')
 
     leftImages.append(left1)
@@ -61,4 +63,4 @@ class Display:
 
   def drawBoxes(self, boxes):
     for b in boxes:
-      self.gameDisplay.blit(self.bigBanks[b.getLogo()], b.getRect())
+      self.gameDisplay.blit(self.banks[b.getSize()][b.getLogo()], b.getRect())

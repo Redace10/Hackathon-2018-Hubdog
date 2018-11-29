@@ -9,6 +9,9 @@ class Box:
     self.__open = False
     self.generate_docs()
 
+  def getSize(self):
+    return self.__size
+
   def getLogo(self):
     return self.__logo
 
