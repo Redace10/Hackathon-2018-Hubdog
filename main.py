@@ -3,6 +3,7 @@ import os
 import random
 import numpy as np
 
+from hpScore import Hp
 from display import Display
 from box import Box
 
@@ -24,7 +25,10 @@ class Game:
     # pygame.mixer.music.play(-1, 0)
 
     # initialize player
-    # player = Player(135, 115, 5, 0)
+    player = Player(135, 115, 5, 0)
+
+    # initialize Hp bar
+    self.hp = Hp(100)
 
     # initialize display
     self.display = Display(pygame, 135, 115, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
@@ -69,11 +73,13 @@ class Game:
     #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
     pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
 
+
   def __del__(self):
     pygame.quit()
 
 game = Game()
 while game.keepPlaying:
   game.display.drawBoxes(game.boxes)
+  game.display.drawHp(game.hp)
   pygame.display.update()
   game.handleEvents()

@@ -64,3 +64,9 @@ class Display:
   def drawBoxes(self, boxes):
     for b in boxes:
       self.gameDisplay.blit(self.banks[b.getSize()][b.getLogo()], b.getRect())
+  
+  # pass in the hp class into this function
+  def drawHp(self, hp):
+    hp.setGameDisplay(self.gameDisplay)
+    hp.healthBarMain(100)
+
