@@ -96,6 +96,7 @@ class Display:
     self.dogImages.append(attack2)
 
     self.gameDisplay = pygame.display.set_mode((GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    self.showKeyboard = False
 
   def drawBoxes(self, boxes):
     for b in boxes:
@@ -149,6 +150,7 @@ class Display:
 
     if (enterUsername):
       if (not vkeyboard.FINISHED):
+        self.showKeyboard = True
         keyboard.draw()
         print('blah')
         spacing = 225
@@ -172,6 +174,7 @@ class Display:
 
     
   def showLeaderboard(self, leaderboard):
+    self.showKeyboard = False
     self.drawWord("HIGH SCORES", GLOBAL.MAP_WIDTH/2, 50, ((RED, RED)), self.fontHighScore)
     self.drawWord("RANK", 100, 100, ((YELLOW, YELLOW)), self.fontColumn)
     self.drawWord("SCORE", 500, 100, ((YELLOW, YELLOW)), self.fontColumn)

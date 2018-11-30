@@ -71,6 +71,49 @@ class Game:
     self.showKeyboard = True
     self.text = ""
 
+  def reset(self):
+    pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+
+    # initialize Hp bar
+    self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
+
+    # initialize Home robot
+    self.homeBot = HomeBot()
+
+    self.initializeBoxes()
+    self.docs = []
+    self.docDuration = 7000
+    self.initializeCompetitors()
+
+    # initialize player
+    self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
+    self.player.setRect(self.display.dogImages[0][0].get_rect())
+    self.leaderboard = Leaderboard()
+    self.playerCooldownEvent = pygame.USEREVENT + 3
+
+    self.clock = pygame.time.Clock()
+    self.keepPlaying = True
+    self.postGame = False
+
+    # Initializes and activates vkeyboard
+    self.renderer = VKeyboardRenderer(
+      # Key font.
+      pygame.font.Font('assets/PressStart2P.ttf', 20),
+      # Keyboard background color.
+      (50, 50, 50),
+      # Key background color (one per state, 0 for released, 1 for pressed).
+      ((255, 255, 255), (0, 0, 0)),
+      # Text color for key (one per state as for the key background).
+      ((0, 0, 0), (255, 255, 255)),
+      # (Optional) special key background color.
+      ((255, 255, 255), (0, 0, 0)),
+    )
+
+    self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
+    self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
+    self.keyboard.enable()
+    self.text = ""
+
   def consumer(self, text):
     self.text = text
 
@@ -114,7 +157,7 @@ class Game:
           self.player.resetMoveY()
           self.player.setMoveDown(False)
       
-      if (self.showKeyboard):
+      if (self.display.showKeyboard):
         self.keyboard.on_event(event)
 
     if (self.player.getMoveLeft()):
@@ -234,6 +277,7 @@ class Game:
     del self.docs[:]
     del self.comps[:]
     del self.boxes[:]
+    self.player.setAttack(False) 
     self.player.emptyCollectedDocs()
     pygame.time.set_timer(self.compSpawnEvent, 0)
     pygame.time.set_timer(self.boxSpawnEvent, 0)
@@ -242,26 +286,28 @@ class Game:
     pygame.quit()
 
 game = Game()
-while game.keepPlaying:
-  game.updateHomebot()
-  game.updateCompetitors()
-  game.updateBoxes()
-  game.updateDocuments()
 
-  game.updateDisplay()
-  
-  game.handleEvents()
-  
-  game.clock.tick(30)
+while game.keepPlaying or game.postGame:
+  while game.keepPlaying:
+    game.updateHomebot()
+    game.updateCompetitors()
+    game.updateBoxes()
+    game.updateDocuments()
 
-game.clear()
+    game.updateDisplay()
+    
+    game.handleEvents()
+    
+    game.clock.tick(30)
 
-while game.postGame:
-  pygame.draw.rect(game.display.gameDisplay, (0, 0, 0), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
-  game.updatePostDisplay()
-  game.handleEvents()
-  pygame.display.update()
-  game.clock.tick(30)
-  
+  game.clear()
+
+  while game.postGame:
+    pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    game.updatePostDisplay()
+    game.handleEvents()
+    pygame.display.update()
+    game.clock.tick(30)
+    
 
 quit()
