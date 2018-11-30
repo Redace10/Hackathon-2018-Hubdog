@@ -216,8 +216,8 @@ class Game:
     self.boxSpawnRate = 1
     self.boxSpawnFrequency = 2000
     self.boxSpawnEvent = pygame.USEREVENT + 1
-    self.bigBoxChance = 0.2
-    self.smallBoxChance = 0.8
+    self.bigBoxChance = 0.3
+    self.smallBoxChance = 0.7
     self.boxDuration = 5000
 
     #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
@@ -225,7 +225,7 @@ class Game:
 
   def initializeCompetitors(self):
     self.comps = []
-    self.compSpawnRate = 1
+    self.compSpawnRate = 2
     self.compSpawnFrequency = 4000
     self.compSpawnEvent = pygame.USEREVENT + 2
     pygame.time.set_timer(self.compSpawnEvent, self.compSpawnFrequency)

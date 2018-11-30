@@ -1,3 +1,4 @@
+zex,4000.0
 ref,1400
 457gfd,1000
 hello123,1000
@@ -7,4 +8,3 @@ Binil,100
 Alex,100
 yoninja,49
 gyrrehjk,49
-azghjjj,49
