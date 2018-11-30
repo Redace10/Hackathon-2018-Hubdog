@@ -9,8 +9,14 @@ from player import Player
 from display import Display
 from player import Player
 from box import Box
+from leaderboard import Leaderboard
+
+from vkeyboard import VKeyboardRenderer
+from vkeyboard import VKeyboardLayout
+from vkeyboard import VKeyboard
 from homeBot import HomeBot
 from competitor import Competitor
+from bryan import Bryan
 
 class Game:
   def __init__(self):
@@ -21,6 +27,10 @@ class Game:
     # plays background song repeatedly
     # pygame.mixer.music.load("The Marching Pirate Spy.mp3")
     # pygame.mixer.music.play(-1, 0)
+
+    self.boxBreakSound = pygame.mixer.Sound('assets/sounds/boxBreak.wav')
+    self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
+    self.docCollectSound = pygame.mixer.Sound('assets/sounds/docFetched.wav')
 
     # initialize Hp bar
     self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
@@ -39,6 +49,7 @@ class Game:
     # initialize player
     self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
     self.player.setRect(self.display.dogImages[0][0].get_rect())
+    self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
 
     # initialize jotstick
@@ -49,11 +60,84 @@ class Game:
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
+    self.bryans = []
+
+    self.clock = pygame.time.Clock()
+    self.keepPlaying = True
+    self.postGame = False
+
+    # Initializes and activates vkeyboard
+    self.renderer = VKeyboardRenderer(
+      # Key font.
+      pygame.font.Font('assets/PressStart2P.ttf', 20),
+      # Keyboard background color.
+      (50, 50, 50),
+      # Key background color (one per state, 0 for released, 1 for pressed).
+      ((255, 255, 255), (0, 0, 0)),
+      # Text color for key (one per state as for the key background).
+      ((0, 0, 0), (255, 255, 255)),
+      # (Optional) special key background color.
+      ((255, 255, 255), (0, 0, 0)),
+    )
+
+    self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
+    self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
+    self.keyboard.enable()
+    self.text = ""
+
+  def reset(self):
+    pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+
+    # initialize Hp bar
+    self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
+
+    # initialize Home robot
+    self.homeBot = HomeBot()
+
+    self.initializeBoxes()
+    self.docs = []
+    self.docDuration = 7000
+    self.initializeCompetitors()
+
+    # initialize player
+    self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
+    self.player.setRect(self.display.dogImages[0][0].get_rect())
+    self.leaderboard = Leaderboard()
+    self.playerCooldownEvent = pygame.USEREVENT + 3
+
+    self.bryans = []
+
+    self.clock = pygame.time.Clock()
+    self.keepPlaying = True
+    self.postGame = False
+
+    # Initializes and activates vkeyboard
+    self.renderer = VKeyboardRenderer(
+      # Key font.
+      pygame.font.Font('assets/PressStart2P.ttf', 20),
+      # Keyboard background color.
+      (50, 50, 50),
+      # Key background color (one per state, 0 for released, 1 for pressed).
+      ((255, 255, 255), (0, 0, 0)),
+      # Text color for key (one per state as for the key background).
+      ((0, 0, 0), (255, 255, 255)),
+      # (Optional) special key background color.
+      ((255, 255, 255), (0, 0, 0)),
+    )
+
+    self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
+    self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
+    self.keyboard.enable()
+    self.text = ""
+
   def joystickMove(self, axis1, axis0):
     if axis1 >= 0.8 or axis1 <= -0.8 or axis0 >= 0.8 or axis0 <= -0.8:
       return True
     else:
       return False
+      
+  def consumer(self, text):
+    self.text = text
 
   def handleEvents(self):
     axis1 = self.joystick.get_axis( 1 )
@@ -64,6 +148,8 @@ class Game:
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.keepPlaying = False
+        self.postGame = False
+
       if event.type == self.boxSpawnEvent:
         self.spawnBox()
       if event.type == self.compSpawnEvent:
@@ -71,6 +157,9 @@ class Game:
       if event.type == self.playerCooldownEvent:
         self.player.canAttack(True)
         pygame.time.set_timer(self.playerCooldownEvent, 0)
+
+      if buttonA == 1 and self.postGame == True and self.display.showKeyboard == False:
+          self.reset()
       # move left -> axis0 <= -0.8
       # move right -> axis0 >= 0.8
       # move up -> axis1 <= -0.8
@@ -161,11 +250,16 @@ class Game:
         GLOBAL.CURRENT_DIR = None
       if buttonA == 1:
         self.player.setAttack(True)
-      if buttonA == 0:
-        self.player.setAttack(False)
+      #if buttonA == 0:
+        #self.player.setAttack(False)
       if buttonB == 1:
         if self.player.hasPowerup():
           self.initiateBryan()
+          self.player.removePowerup()
+      
+      if (self.display.showKeyboard):
+        self.keyboard.on_event(event)
+
     if (self.player.getMoveLeft()):
       self.player.moveX(-1)
     if (game.player.getMoveRight()):
@@ -179,6 +273,7 @@ class Game:
     for b in self.boxes:
       if b.shouldHide(pygame.time.get_ticks()):
         self.boxes.remove(b)
+        self.boxBreakSound.play()
       if self.player.getAttack() and self.player.getRect().colliderect(b.getRect()):
         docs = b.openBox()
         for d in docs:
@@ -194,9 +289,11 @@ class Game:
         self.player.collectDoc()
         self.docs.remove(d)
         docCollected = True
+        self.docCollectSound.play()
       elif d.shouldHide(pygame.time.get_ticks(),
-      list(map(lambda c: c.getRect(), self.comps))):
-        self.docs.remove(d)
+      list(map(lambda c: c.getRect(), self.comps)),
+      list(map(lambda b: b.getRect(), self.bryans))):
+        self.docs.remove(d),
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
@@ -210,6 +307,7 @@ class Game:
         if (rect.collidelist(box_rects) < 0):
           self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
           break
+      self.boxAppearSound.play()
 
   def initializeBoxes(self):
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
@@ -220,8 +318,8 @@ class Game:
     self.boxSpawnRate = 1
     self.boxSpawnFrequency = 2000
     self.boxSpawnEvent = pygame.USEREVENT + 1
-    self.bigBoxChance = 0.2
-    self.smallBoxChance = 0.8
+    self.bigBoxChance = 0.3
+    self.smallBoxChance = 0.7
     self.boxDuration = 5000
 
     #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
@@ -229,7 +327,7 @@ class Game:
 
   def initializeCompetitors(self):
     self.comps = []
-    self.compSpawnRate = 1
+    self.compSpawnRate = 2
     self.compSpawnFrequency = 4000
     self.compSpawnEvent = pygame.USEREVENT + 2
     pygame.time.set_timer(self.compSpawnEvent, self.compSpawnFrequency)
@@ -249,11 +347,32 @@ class Game:
       elif self.player.getRect().colliderect(c.getRect()):
         self.player.getHit()
 
+  def updateHomebot(self):
+    if self.player.getRect().colliderect(self.homeBot.getRect()):
+      self.homeBot.inTakeDoc(self.player.getCollectedDocs())
+      self.hp.updateHealth(GLOBAL.DOC_INCREASE_HEALTH * self.player.getCollectedDocs())
+      self.player.emptyCollectedDocs()
+    if self.hp.getHp() <= 0:
+      self.postGame = True
+      self.keepPlaying = False
+
+  def initiateBryan(self):
+    rect = pygame.Rect(0, 100, GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT)
+    self.bryans.append(Bryan(rect))
+
+  def updateBryan(self):
+    for b in self.bryans:
+      if b.selectTarget(self.docs):
+        b.moveToTarget()
+      else: 
+        self.bryans.remove(b)
+
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
     self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)
+    self.display.drawBryans(self.bryans)
     #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
     self.display.drawDog(self.player, self.playerCooldownEvent)
     collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
@@ -265,19 +384,47 @@ class Game:
     self.hp.updateHealth(GLOBAL.NORMAL_DECREASING_RATE)
     pygame.display.update()
 
+  def updatePostDisplay(self):
+    pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    self.leaderboard.setScore(int(self.homeBot.getDocNum() * 100))
+    self.display.showEnterUsername(self.leaderboard, self.keyboard, self.text)
+
+  def clear(self):
+    del self.docs[:]
+    del self.comps[:]
+    del self.boxes[:]
+    self.player.setAttack(False) 
+    self.player.emptyCollectedDocs()
+    pygame.time.set_timer(self.compSpawnEvent, 0)
+    pygame.time.set_timer(self.boxSpawnEvent, 0)
+
   def __del__(self):
     pygame.quit()
 
 game = Game()
-while game.keepPlaying:
-  game.updateCompetitors()
-  game.updateBoxes()
-  game.updateDocuments()
 
-  game.updateDisplay()
-  
-  game.handleEvents()
+while game.keepPlaying or game.postGame:
+  while game.keepPlaying:
+    game.updateHomebot()
+    game.updateCompetitors()
+    game.updateBryan()
+    game.updateBoxes()
+    game.updateDocuments()
 
-  game.clock.tick(30)
+    game.updateDisplay()
+    
+    game.handleEvents()
+    
+    game.clock.tick(30)
+
+  game.clear()
+
+  while game.postGame:
+    pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    game.updatePostDisplay()
+    game.handleEvents()
+    pygame.display.update()
+    game.clock.tick(30)
+    
 
 quit()

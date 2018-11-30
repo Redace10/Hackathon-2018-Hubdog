@@ -7,7 +7,7 @@ class Player:
     self.__height = height
     self.__speed = speed
     self.__initialSpeed = speed
-    self.__border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
+    self.__border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 80)
 
 
     self.__directionX = 0  # 0 = left, 1 = right
@@ -28,6 +28,7 @@ class Player:
     self.__moveY = 0
 
     self.__collectedDocs = 0
+    self.__carryingPowerup = True
 
   def setWidth(self, value):
     self.__width = value
@@ -77,6 +78,9 @@ class Player:
 
   def collectDoc(self):
     self.__collectedDocs += 1
+
+  def emptyCollectedDocs(self):
+    self.__collectedDocs = 0
 
   def getCollectedDocs(self):
     return self.__collectedDocs
@@ -149,4 +153,13 @@ class Player:
 
   def getHit(self):
     self.__collectedDocs = 0
+
+  def giveBryan(self):
+    if self.__carryingPowerup == False:
+      self.__carryingPowerup == True
+
+  def hasPowerup(self):
+    return self.__carryingPowerup
   
+  def removePowerup(self):
+    self.__carryingPowerup = False

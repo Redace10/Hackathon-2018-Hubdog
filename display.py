@@ -1,4 +1,16 @@
 import pygame
+import vkeyboard
+
+RED = (255,0,0)
+GREEN = (0, 200, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+BLACK = (0, 0, 0)
+DARK_GREEN = (0, 175, 0)
+WHITE = (255, 255, 255)
+GRAY = (150, 150, 150)
+DARK_GRAY = (128, 128, 128)
+
 import GLOBAL
 
 class Display:
@@ -7,6 +19,10 @@ class Display:
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
+
+    self.fontHighScore = pygame.font.Font('assets/PressStart2P.ttf', 50)
+    self.fontColumn = pygame.font.Font('assets/PressStart2P.ttf', 30)
+    self.fontData = pygame.font.Font('assets/PressStart2P.ttf', 20)
 
     leftImages = []
     rightImages = []
@@ -61,9 +77,17 @@ class Display:
 
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
+    self.inserted = False
     # Competitor Assets
     comp = pygame.image.load('assets/enemy/veryfi.png')
     self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
+
+    # bryan Assets:
+    bryan1 = pygame.image.load('assets/bryan/bryan1.png')
+    bryan1 = pygame.transform.scale(bryan1, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
+    bryan2 = pygame.image.load('assets/bryan/bryan2.png')
+    bryan2 = pygame.transform.scale(bryan2, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
+    self.bryans = [bryan1, bryan2]
 
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
@@ -79,6 +103,11 @@ class Display:
     self.dogImages.append(attack2)
 
     self.gameDisplay = pygame.display.set_mode((GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    self.showKeyboard = False
+
+  def drawBryans(self, bryans):
+    for b in bryans:
+      self.gameDisplay.blit(self.bryans[0], b.getRect())
 
   def drawBoxes(self, boxes):
     for b in boxes:
@@ -124,11 +153,56 @@ class Display:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
 
-  def drawWord(self, text, x, y, colours):
-    word_surface = self.fontObj.render(text, True, colours[0])
+  def showEnterUsername(self, leaderboard, keyboard, text):
+    enterUsername = True
+    if (not leaderboard.getReadLeaderboard()):
+      enterUsername = leaderboard.updateLeaderboard()
+      leaderboard.setReadLeaderboard(True)
+
+    if (enterUsername):
+      if (not vkeyboard.FINISHED):
+        self.showKeyboard = True
+        keyboard.draw()
+        spacing = 225
+        for index in range(8):
+          self.drawWord("_", spacing, 250, ((RED, RED)), self.fontHighScore)
+          if (index < len(text)):
+            self.drawWord(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
+          spacing += 75
+      if (vkeyboard.FINISHED and not self.inserted):
+        if (len(leaderboard.getScoreList()) <= leaderboard.getMaxList()):
+          del leaderboard.getScoreList()[-1]
+        leaderboard.setUsername(text)
+        leaderboard.insertScore()
+        self.inserted = True
+    
+    if (vkeyboard.FINISHED):
+      self.showLeaderboard(leaderboard)
+
+    
+  def showLeaderboard(self, leaderboard):
+    self.showKeyboard = False
+    self.drawWord("HIGH SCORES", GLOBAL.MAP_WIDTH/2, 50, ((RED, RED)), self.fontHighScore)
+    self.drawWord("RANK", 100, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.drawWord("SCORE", 500, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.drawWord("NAME", 900, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    spacing = 150
+    rank = 1
+    for score in leaderboard.getScoreList():
+      self.drawWord(rank, 100, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.drawWord(score["score"], 500, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.drawWord(score["name"], 900, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      spacing += 50
+      rank += 1
+
+  def drawWord(self, text, x, y, colours, font=None):
+    if font == None:
+      font = self.fontObj
+    word_surface = font.render(str(text), True, colours[0])
     word_rect = word_surface.get_rect()
     word_rect.center  = (x, y)
-    word_outline = self.fontObj.render(text, True, colours[1])
+
+    word_outline = font.render(str(text), True, colours[1])
     outline_rect = word_outline.get_rect()
     outline_rect.center = (x - 1, y)
     self.gameDisplay.blit(word_outline, outline_rect)
