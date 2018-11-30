@@ -167,6 +167,14 @@ class Game:
       elif self.player.getRect().colliderect(c.getRect()):
         self.player.getHit()
 
+  def updateHomebot(self):
+    if self.player.getRect().colliderect(self.homeBot.getRect()):
+      self.homeBot.inTakeDoc(self.player.getCollectedDocs())
+      self.hp.updateHealth(GLOBAL.DOC_INCREASE_HEALTH * self.player.getCollectedDocs())
+      self.player.emptyCollectedDocs()
+    if self.hp.getHp() == 0:
+      self.keepPlaying = False
+
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
@@ -188,6 +196,7 @@ class Game:
 
 game = Game()
 while game.keepPlaying:
+  game.updateHomebot()
   game.updateCompetitors()
   game.updateBoxes()
   game.updateDocuments()

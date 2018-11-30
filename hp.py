@@ -13,6 +13,9 @@ class Hp:
     def __init__(self, hp):
         self.health = hp
 
+    def getHp(self):
+        return self.health
+
     def updateHealth(self, value):
         # here we need to figure out a logic of how 
         # HP bar decreases over time

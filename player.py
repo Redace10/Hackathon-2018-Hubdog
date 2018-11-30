@@ -78,6 +78,9 @@ class Player:
   def collectDoc(self):
     self.__collectedDocs += 1
 
+  def emptyCollectedDocs(self):
+    self.__collectedDocs = 0
+
   def getCollectedDocs(self):
     return self.__collectedDocs
   
