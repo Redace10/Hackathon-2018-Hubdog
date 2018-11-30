@@ -1,10 +1,10 @@
-zex,4000.0
+zex,4000
 ref,1400
 457gfd,1000
 hello123,1000
 td,1000
+aqwwww,200
 Hamzah,100
 Binil,100
 Alex,100
 yoninja,49
-gyrrehjk,49
