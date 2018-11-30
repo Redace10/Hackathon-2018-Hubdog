@@ -1,4 +1,5 @@
 import GLOBAL
+import pygame
 
 class Player:
   def __init__(self, width, height, speed, direction):
@@ -21,6 +22,7 @@ class Player:
 
     self.__attack = False
     self.__attcounter = 0
+    self.__canAttack = True
 
     self.__moveX = 0
     self.__moveY = 0
@@ -64,7 +66,11 @@ class Player:
     return self.__rect
 
   def setAttack(self, value):
-    self.__attack = value
+    if self.__canAttack == True:
+      self.__attack = value
+
+  def canAttack(self, value):
+    self.__canAttack = value
 
   def getAttack(self):
     return self.__attack
@@ -124,7 +130,7 @@ class Player:
   def resetMoveY(self):
     self.__moveY = 0
 
-  def attack(self, dir):
+  def attack(self, dir, cooldownevent):
     self.__attack = True
     self.__attcounter += 1
     self.__speed = self.__initialSpeed * 2
@@ -133,6 +139,8 @@ class Player:
       direction = -1
     self.moveX(direction)
     if (self.__attcounter > 5):
+      self.__canAttack = False
+      pygame.time.set_timer(cooldownevent, GLOBAL.PLAYER_COOLDOWN)
       self.__speed = self.__initialSpeed
       self.__attcounter = 0
       self.__attack = False

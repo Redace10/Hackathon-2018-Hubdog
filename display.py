@@ -92,7 +92,7 @@ class Display:
     for c in comps:
       self.gameDisplay.blit(self.comp, c.getRect())
 
-  def drawDog(self, dog):
+  def drawDog(self, dog, cooldownevent):
     # self.gameDisplay.blit(self.map, (0, 0))
     if (self.dogIndex == 19):
       self.dogIndex = 0
@@ -110,7 +110,7 @@ class Display:
         dogImage = self.dogImages[2]
       elif(self.dogFace == 1):
         dogImage = self.dogImages[3]
-      dog.attack(self.dogFace)
+      dog.attack(self.dogFace, cooldownevent)
       self.gameDisplay.blit(dogImage, (dog.getRect().x, dog.getRect().y))
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]

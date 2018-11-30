@@ -30,6 +30,8 @@ class Game:
     # initialize player
     self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
     self.player.setRect(self.display.dogImages[0][0].get_rect())
+    self.playerCooldownEvent = pygame.USEREVENT + 3
+
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -43,41 +45,44 @@ class Game:
         self.spawnBox()
       if event.type == self.compSpawnEvent:
         self.spawnCompetitors()
+      if event.type == self.playerCooldownEvent:
+        self.player.canAttack(True)
+        pygame.time.set_timer(self.playerCooldownEvent, 0)
 
-      if event.type == pygame.KEYDOWN and game.player.getAttack() == False:
+      if event.type == pygame.KEYDOWN and self.player.getAttack() == False:
         if event.key == pygame.K_LEFT:
-          game.player.setMoveLeft(True)
+          self.player.setMoveLeft(True)
         if event.key == pygame.K_RIGHT:
-          game.player.setMoveRight(True)
+          self.player.setMoveRight(True)
         if event.key == pygame.K_UP:
-          game.player.setMoveUp(True)
+          self.player.setMoveUp(True)
         if event.key == pygame.K_DOWN:
-          game.player.setMoveDown(True)
+          self.player.setMoveDown(True)
         if event.key == pygame.K_SPACE:
-          game.player.setAttack(True)
+          self.player.setAttack(True)
         
       elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
-          game.player.resetMoveX()
-          game.player.setMoveLeft(False)
+          self.player.resetMoveX()
+          self.player.setMoveLeft(False)
         if event.key == pygame.K_RIGHT:
-          game.player.resetMoveX()
-          game.player.setMoveRight(False)
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
         if event.key == pygame.K_UP:
-          game.player.resetMoveY()
-          game.player.setMoveUp(False)
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
         if event.key == pygame.K_DOWN:
-          game.player.resetMoveY()
-          game.player.setMoveDown(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
 
-    if (game.player.getMoveLeft()):
-      game.player.moveX(-1)
+    if (self.player.getMoveLeft()):
+      self.player.moveX(-1)
     if (game.player.getMoveRight()):
-      game.player.moveX(1)
+      self.player.moveX(1)
     if (game.player.getMoveUp()):
-      game.player.moveY(-1)
+      self.player.moveY(-1)
     if (game.player.getMoveDown()):
-      game.player.moveY(1)
+      self.player.moveY(1)
 
   def updateBoxes(self):
     for b in self.boxes:
@@ -159,7 +164,7 @@ class Game:
     self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)
     #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
-    self.display.drawDog(self.player)
+    self.display.drawDog(self.player, self.playerCooldownEvent)
     collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
     self.display.drawWord(collectedDocs, 160, 20, [(255, 255, 0), (0, 0, 255)])
     pygame.display.update()
