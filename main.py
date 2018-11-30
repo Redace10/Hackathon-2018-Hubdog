@@ -68,7 +68,6 @@ class Game:
     self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
     self.keyboard.enable()
-    self.showKeyboard = True
     self.text = ""
 
   def reset(self):

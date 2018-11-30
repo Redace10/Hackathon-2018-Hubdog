@@ -152,17 +152,13 @@ class Display:
       if (not vkeyboard.FINISHED):
         self.showKeyboard = True
         keyboard.draw()
-        print('blah')
         spacing = 225
         for index in range(8):
-          print('here')
           self.drawWord("_", spacing, 250, ((RED, RED)), self.fontHighScore)
           if (index < len(text)):
-            print('last if')
             self.drawWord(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
           spacing += 75
       if (vkeyboard.FINISHED and not self.inserted):
-        print('if 3')
         if (len(leaderboard.getScoreList()) <= leaderboard.getMaxList()):
           del leaderboard.getScoreList()[-1]
         leaderboard.setUsername(text)
