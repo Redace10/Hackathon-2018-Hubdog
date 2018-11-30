@@ -2,7 +2,7 @@ import os
 
 class Leaderboard:
   def __init__(self):
-    self.__score = 1
+    self.__score = 49
     self.__username = "Hamzah"
     self.__filename = "leaderboard.txt"
     self.__listScores = []
@@ -30,8 +30,8 @@ class Leaderboard:
   def getScoreList(self):
     return self.__listScores
 
-  def enterUsername(self):
-    print("we need to implement this")
+  def getMaxList(self):
+    return self.__maxList
 
   def updateLeaderboard(self):
     self.readScore()
@@ -40,11 +40,7 @@ class Leaderboard:
     else:
       highScore = 0
 
-    if (self.__score > highScore or len(self.__listScores) < self.__maxList):
-      self.enterUsername()
-      if (len(self.__listScores) == self.__maxList):
-        del self.__listScores[-1]
-      self.insertScore()
+    return (self.__score > highScore or len(self.__listScores) < self.__maxList)
 
   def readScore(self):
     if not os.path.exists(self.__filename):
@@ -54,6 +50,7 @@ class Leaderboard:
     lines = file.readlines()
     file.close()
 
+    self.__listScores = []
     for line in lines:
       name, score = line.split(",")
       score = int(score)
@@ -63,7 +60,6 @@ class Leaderboard:
     os.remove(self.__filename)
     file = open(self.__filename, 'a+')
     enteredScore = False
-    print(self.__listScores)
     for item in self.__listScores:
       name = item["name"]
       score = item["score"]
@@ -75,7 +71,7 @@ class Leaderboard:
     if (not enteredScore):
       file.write(self.__username+","+ str(self.__score) + "\n")
     file.close()
-
+    self.updateLeaderboard()
 
 # score = Score()
 # score.updateLeaderboard()

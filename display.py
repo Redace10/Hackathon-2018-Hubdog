@@ -1,4 +1,5 @@
 import pygame
+import vkeyboard
 
 CHEQUE_WIDTH = 30
 CHEQUE_HEIGHT = 15
@@ -80,6 +81,8 @@ class Display:
 
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
+    self.inserted = False
+
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
 
@@ -136,11 +139,33 @@ class Display:
     self.drawDog(game.player)
     pygame.display.update()
 
-  def showLeaderboard(self, leaderboard):
+  def showEnterUsername(self, leaderboard, keyboard, text):
+    enterUsername = True
     if (not leaderboard.getReadLeaderboard()):
-      leaderboard.updateLeaderboard()
+      enterUsername = leaderboard.updateLeaderboard()
       leaderboard.setReadLeaderboard(True)
 
+    if (enterUsername):
+      if (not vkeyboard.FINISHED):
+        keyboard.draw()
+        spacing = 225
+        for index in range(8):
+          self.draw_word("_", spacing, 250, ((RED, RED)), self.fontHighScore)
+          if (index < len(text)):
+            self.draw_word(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
+          spacing += 75
+      if (vkeyboard.FINISHED and not self.inserted):
+        if (len(leaderboard.getScoreList()) <= leaderboard.getMaxList()):
+          del leaderboard.getScoreList()[-1]
+        leaderboard.setUsername(text)
+        leaderboard.insertScore()
+        self.inserted = True
+    
+    if (vkeyboard.FINISHED):
+      self.showLeaderboard(leaderboard)
+
+    
+  def showLeaderboard(self, leaderboard):
     self.draw_word("HIGH SCORES", WIDTH-WIDTH/2, 50, ((RED, RED)), self.fontHighScore)
     self.draw_word("RANK", 100, 100, ((YELLOW, YELLOW)), self.fontColumn)
     self.draw_word("SCORE", 500, 100, ((YELLOW, YELLOW)), self.fontColumn)

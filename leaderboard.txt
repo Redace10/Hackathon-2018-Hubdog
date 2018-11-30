@@ -1,10 +1,10 @@
+457gfd,1000
+hello123,1000
+td,1000
 Hamzah,100
 Binil,100
 Alex,100
+yoninja,49
 Aman,40
 Terry,20
 Andrew,11
-Andrew,10
-Andrew,2
-Andrew,2
-Andrew,1

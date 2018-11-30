@@ -8,6 +8,10 @@ from player import Player
 from box import Box
 from leaderboard import Leaderboard
 
+from vkeyboard import VKeyboardRenderer
+from vkeyboard import VKeyboardLayout
+from vkeyboard import VKeyboard
+
 WIDTH = 1000
 HEIGHT = 800
 
@@ -45,6 +49,29 @@ class Game:
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
 
+    # Initializes and activates vkeyboard
+    self.renderer = VKeyboardRenderer(
+      # Key font.
+      pygame.font.Font('assets/PressStart2P.ttf', 20),
+      # Keyboard background color.
+      (50, 50, 50),
+      # Key background color (one per state, 0 for released, 1 for pressed).
+      ((255, 255, 255), (0, 0, 0)),
+      # Text color for key (one per state as for the key background).
+      ((0, 0, 0), (255, 255, 255)),
+      # (Optional) special key background color.
+      ((255, 255, 255), (0, 0, 0)),
+    )
+
+    self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
+    self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
+    self.keyboard.enable()
+    self.showKeyboard = True
+    self.text = ""
+
+  def consumer(self, text):
+    self.text = text
+
   def handleEvents(self):
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -78,6 +105,9 @@ class Game:
         if event.key == pygame.K_DOWN:
           game.player.resetMoveY()
           game.player.setMoveDown(False)
+      
+      if (self.showKeyboard):
+        self.keyboard.on_event(event)
 
     if (game.player.getMoveLeft()):
       game.player.moveX(-1)
@@ -137,7 +167,8 @@ class Game:
     # self.display.drawDocuments(self.docs)
     # pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
     # self.display.drawDog(self.player)
-    self.display.showLeaderboard(self.leaderboard)
+    self.display.showEnterUsername(self.leaderboard, self.keyboard, self.text)
+    # self.display.showLeaderboard(self.leaderboard)
     pygame.display.update()
 
   def __del__(self):
