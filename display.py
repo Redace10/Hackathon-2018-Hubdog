@@ -88,10 +88,6 @@ class Display:
   
   def drawHomeBot(self,homeBot):
     homeBot.setGameDisplay(self.gameDisplay)
-    homeBotIcon = pygame.image.load('assets/homeBot.png')
-    homeBotIcon = pygame.transform.scale(homeBotIcon, (100, 200))
-    playerRect = homeBotIcon.get_rect(center=(25, GLOBAL.MAP_HEIGHT*0.85))
-    self.gameDisplay.blit(homeBotIcon, playerRect)
 
   def drawDocuments(self, docs):
     for d in docs:

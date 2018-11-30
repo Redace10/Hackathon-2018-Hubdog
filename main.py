@@ -144,7 +144,7 @@ class Game:
     collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
     self.display.drawWord(collectedDocs, 160, 20, [(255, 255, 0), (0, 0, 255)])
     self.display.drawHp(self.hp, self.hp.health) # we going to have some function to decrease the health
-    #homeBog draw
+    #homeBot draw
     self.display.drawHomeBot(self.homeBot)
     #health bar draw
     self.hp.updateHealth(GLOBAL.NORMAL_DECREASING_RATE)
