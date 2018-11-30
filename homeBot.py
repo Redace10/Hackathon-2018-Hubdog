@@ -7,8 +7,8 @@ class HomeBot:
     def setGameDisplay(self, gameDisplay):
         self.gameDisplay = gameDisplay
         self.homeBotIcon = pygame.image.load('assets/homeBot.png')
-        self.homeBotIcon = pygame.transform.scale(self.homeBotIcon, (100, 200))
-        self.playerRect = self.homeBotIcon.get_rect(center=(25, GLOBAL.MAP_HEIGHT*0.85))
+        self.homeBotIcon = pygame.transform.scale(self.homeBotIcon, (GLOBAL.HOMEBOT_WIDTH, GLOBAL.HOMEBOT_HEIGHT))
+        self.playerRect = self.homeBotIcon.get_rect(center=(38, GLOBAL.MAP_HEIGHT - 70))
         self.gameDisplay.blit(self.homeBotIcon, self.playerRect)
     
     def getRect(self):

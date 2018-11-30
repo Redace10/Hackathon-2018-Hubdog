@@ -30,7 +30,7 @@ class Hp:
             playerHealthColor = self.orange
         else:
             playerHealthColor = self.red
-        pygame.draw.rect(self.gameDisplay, self.black, (47, GLOBAL.MAP_HEIGHT - 65, GLOBAL.MAP_WIDTH * 0.92, 37))
-        pygame.draw.rect(self.gameDisplay, self.white, (52, GLOBAL.MAP_HEIGHT - 61, GLOBAL.MAP_WIDTH * 0.92, 29))
+        pygame.draw.rect(self.gameDisplay, self.black, (70, GLOBAL.MAP_HEIGHT - 65, GLOBAL.MAP_WIDTH * 0.90, 37))
+        pygame.draw.rect(self.gameDisplay, self.white, (75, GLOBAL.MAP_HEIGHT - 61, GLOBAL.MAP_WIDTH * 0.90, 29))
         if playerHealth > 0:
-            pygame.draw.rect(self.gameDisplay, playerHealthColor, (54, GLOBAL.MAP_HEIGHT - 59, playerHealth, 25))
+            pygame.draw.rect(self.gameDisplay, playerHealthColor, (77, GLOBAL.MAP_HEIGHT - 59, playerHealth, 25))

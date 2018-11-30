@@ -4,7 +4,6 @@ import GLOBAL
 class Display:
   def __init__(self, pygame):
     self.fontObj = pygame.font.Font('assets/PressStart2P.ttf', 20)
-    self.border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
@@ -62,6 +61,10 @@ class Display:
 
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
+    # Competitor Assets
+    comp = pygame.image.load('assets/enemy/veryfi.png')
+    self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
+
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
 
@@ -93,7 +96,11 @@ class Display:
     for d in docs:
       self.gameDisplay.blit(self.documents[d.getFormat()], d.getRect())
 
-  def drawDog(self, dog):
+  def drawComps(self, comps):
+    for c in comps:
+      self.gameDisplay.blit(self.comp, c.getRect())
+
+  def drawDog(self, dog, cooldownevent):
     # self.gameDisplay.blit(self.map, (0, 0))
     if (self.dogIndex == 19):
       self.dogIndex = 0
@@ -106,13 +113,12 @@ class Display:
     if (dog.getMoveLeft() or dog.getMoveRight() or dog.getMoveUp() or dog.getMoveDown()):
       self.dogIndex += 1
     
-    dog.getRect().clamp_ip(self.border)
     if (dog.getAttack()):
       if (self.dogFace == 0):
         dogImage = self.dogImages[2]
       elif(self.dogFace == 1):
         dogImage = self.dogImages[3]
-      dog.attack(self.dogFace)
+      dog.attack(self.dogFace, cooldownevent)
       self.gameDisplay.blit(dogImage, (dog.getRect().x, dog.getRect().y))
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]

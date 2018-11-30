@@ -10,6 +10,7 @@ from display import Display
 from player import Player
 from box import Box
 from homeBot import HomeBot
+from competitor import Competitor
 
 class Game:
   def __init__(self):
@@ -33,10 +34,13 @@ class Game:
     self.initializeBoxes()
     self.docs = []
     self.docDuration = 7000
+    self.initializeCompetitors()
 
     # initialize player
     self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
     self.player.setRect(self.display.dogImages[0][0].get_rect())
+    self.playerCooldownEvent = pygame.USEREVENT + 3
+
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -48,41 +52,46 @@ class Game:
 
       if event.type == self.boxSpawnEvent:
         self.spawnBox()
+      if event.type == self.compSpawnEvent:
+        self.spawnCompetitors()
+      if event.type == self.playerCooldownEvent:
+        self.player.canAttack(True)
+        pygame.time.set_timer(self.playerCooldownEvent, 0)
 
-      if event.type == pygame.KEYDOWN and game.player.getAttack() == False:
+      if event.type == pygame.KEYDOWN and self.player.getAttack() == False:
         if event.key == pygame.K_LEFT:
-          game.player.setMoveLeft(True)
+          self.player.setMoveLeft(True)
         if event.key == pygame.K_RIGHT:
-          game.player.setMoveRight(True)
+          self.player.setMoveRight(True)
         if event.key == pygame.K_UP:
-          game.player.setMoveUp(True)
+          self.player.setMoveUp(True)
         if event.key == pygame.K_DOWN:
-          game.player.setMoveDown(True)
+          self.player.setMoveDown(True)
         if event.key == pygame.K_SPACE:
-          game.player.setAttack(True)
+          self.player.setAttack(True)
         
       elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
-          game.player.resetMoveX()
-          game.player.setMoveLeft(False)
+          self.player.resetMoveX()
+          self.player.setMoveLeft(False)
         if event.key == pygame.K_RIGHT:
-          game.player.resetMoveX()
-          game.player.setMoveRight(False)
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
         if event.key == pygame.K_UP:
-          game.player.resetMoveY()
-          game.player.setMoveUp(False)
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
         if event.key == pygame.K_DOWN:
-          game.player.resetMoveY()
-          game.player.setMoveDown(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
 
-    if (game.player.getMoveLeft()):
-      game.player.moveX(-1)
+    if (self.player.getMoveLeft()):
+      self.player.moveX(-1)
     if (game.player.getMoveRight()):
-      game.player.moveX(1)
+      self.player.moveX(1)
     if (game.player.getMoveUp()):
-      game.player.moveY(-1)
+      self.player.moveY(-1)
     if (game.player.getMoveDown()):
-      game.player.moveY(1)
+      self.player.moveY(1)
 
   def updateBoxes(self):
     for b in self.boxes:
@@ -103,7 +112,8 @@ class Game:
         self.player.collectDoc()
         self.docs.remove(d)
         docCollected = True
-      if d.shouldHide(pygame.time.get_ticks()):
+      elif d.shouldHide(pygame.time.get_ticks(),
+      list(map(lambda c: c.getRect(), self.comps))):
         self.docs.remove(d)
 
   def spawnBox(self):
@@ -135,12 +145,35 @@ class Game:
     #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
     pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
 
+  def initializeCompetitors(self):
+    self.comps = []
+    self.compSpawnRate = 1
+    self.compSpawnFrequency = 4000
+    self.compSpawnEvent = pygame.USEREVENT + 2
+    pygame.time.set_timer(self.compSpawnEvent, self.compSpawnFrequency)
+
+  def spawnCompetitors(self):
+    for i in range(self.compSpawnRate):
+      loc = random.choice(GLOBAL.COMP_SPAWNS)
+      rect = pygame.Rect(loc[0], loc[1], GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT)
+      self.comps.append(Competitor('veryfi', rect, GLOBAL.COMP_SPEED))
+
+  def updateCompetitors(self):
+    for c in self.comps:
+      if c.selectTarget(self.docs, self.player):
+        c.moveToTarget()
+      if self.player.getAttack() and self.player.getRect().colliderect(c.getRect()):
+        self.comps.remove(c)
+      elif self.player.getRect().colliderect(c.getRect()):
+        self.player.getHit()
+
   def updateDisplay(self):
-    pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
+    self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)
     #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
-    self.display.drawDog(self.player)
+    self.display.drawDog(self.player, self.playerCooldownEvent)
     collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
     self.display.drawWord(collectedDocs, 160, 20, [(255, 255, 0), (0, 0, 255)])
     self.display.drawHp(self.hp, self.hp.health) # we going to have some function to decrease the health
@@ -155,6 +188,7 @@ class Game:
 
 game = Game()
 while game.keepPlaying:
+  game.updateCompetitors()
   game.updateBoxes()
   game.updateDocuments()
 

@@ -1,10 +1,15 @@
+import GLOBAL
+import pygame
+
 class Player:
   def __init__(self, width, height, speed, direction):
     self.__width = width
     self.__height = height
     self.__speed = speed
     self.__initialSpeed = speed
-    
+    self.__border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
+
+
     self.__directionX = 0  # 0 = left, 1 = right
     self.__directionY = 0  # 0 = up, 1 = down
 
@@ -17,6 +22,7 @@ class Player:
 
     self.__attack = False
     self.__attcounter = 0
+    self.__canAttack = True
 
     self.__moveX = 0
     self.__moveY = 0
@@ -60,7 +66,11 @@ class Player:
     return self.__rect
 
   def setAttack(self, value):
-    self.__attack = value
+    if self.__canAttack == True:
+      self.__attack = value
+
+  def canAttack(self, value):
+    self.__canAttack = value
 
   def getAttack(self):
     return self.__attack
@@ -106,10 +116,13 @@ class Player:
   def moveX(self, dir):
     self.__moveX = dir * self.__speed
     self.__rect.move_ip(self.__moveX, 0)
+    self.__rect.clamp_ip(self.__border)
 
   def moveY(self, dir):
     self.__moveY = dir * self.__speed
     self.__rect.move_ip(0, self.__moveY)
+    self.__rect.clamp_ip(self.__border)
+
 
   def resetMoveX(self):
     self.__moveX = 0
@@ -117,7 +130,7 @@ class Player:
   def resetMoveY(self):
     self.__moveY = 0
 
-  def attack(self, dir):
+  def attack(self, dir, cooldownevent):
     self.__attack = True
     self.__attcounter += 1
     self.__speed = self.__initialSpeed * 2
@@ -126,9 +139,14 @@ class Player:
       direction = -1
     self.moveX(direction)
     if (self.__attcounter > 5):
+      self.__canAttack = False
+      pygame.time.set_timer(cooldownevent, GLOBAL.PLAYER_COOLDOWN)
       self.__speed = self.__initialSpeed
       self.__attcounter = 0
       self.__attack = False
       self.resetMoveX()
       self.resetMoveY()
+
+  def getHit(self):
+    self.__collectedDocs = 0
   
