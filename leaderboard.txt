@@ -1,10 +1,10 @@
 zex,4000
+a,3000
 ref,1400
 457gfd,1000
 hello123,1000
 td,1000
+s,800
 aqwwww,200
 zer,200
-Hamzah,100
-Binil,100
-Alex,100
+qal,200

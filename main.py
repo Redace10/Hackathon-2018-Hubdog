@@ -353,8 +353,8 @@ class Game:
 
   def initializeCompetitors(self):
     self.comps = []
-    self.compSpawnRate = 2
-    self.compSpawnFrequency = 4000
+    self.compSpawnRate = 1
+    self.compSpawnFrequency = 3000
     self.compSpawnEvent = pygame.USEREVENT + 2
     pygame.time.set_timer(self.compSpawnEvent, self.compSpawnFrequency)
 
