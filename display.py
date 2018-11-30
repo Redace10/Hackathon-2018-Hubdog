@@ -83,11 +83,14 @@ class Display:
     self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
 
     # bryan Assets:
+    bryan = pygame.image.load('assets/bryan/bryan.png')
+    self.bigBryan = pygame.transform.scale(bryan, (GLOBAL.BRYAN_WIDTH+20, GLOBAL.BRYAN_HEIGHT+20))
+    bryan = pygame.transform.scale(bryan, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
     bryan1 = pygame.image.load('assets/bryan/bryan1.png')
     bryan1 = pygame.transform.scale(bryan1, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
     bryan2 = pygame.image.load('assets/bryan/bryan2.png')
     bryan2 = pygame.transform.scale(bryan2, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
-    self.bryans = [bryan1, bryan2]
+    self.bryans = [bryan, bryan1, bryan2]
 
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
@@ -153,6 +156,9 @@ class Display:
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
+    
+    if dog.hasPowerup():
+      self.gameDisplay.blit(self.bigBryan, (GLOBAL.MAP_WIDTH - 90, 20, GLOBAL.BRYAN_WIDTH+20, GLOBAL.BRYAN_HEIGHT+20))
 
   def showEnterUsername(self, leaderboard, keyboard, text):
     if (not leaderboard.getReadLeaderboard()):

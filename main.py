@@ -52,6 +52,8 @@ class Game:
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
+    self.playerBryanEvent = pygame.USEREVENT + 4
+    pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
 
     # initialize jotstick
     pygame.joystick.init()
@@ -106,6 +108,7 @@ class Game:
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
+    pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
 
     self.bryans = []
 
@@ -146,7 +149,7 @@ class Game:
     axis0 = self.joystick.get_axis( 0 )
     buttonA = self.joystick.get_button( 0 )
     buttonB = self.joystick.get_button( 1 )
-    print(GLOBAL.CURRENT_DIR)
+    #print(GLOBAL.CURRENT_DIR)
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.keepPlaying = False
@@ -159,6 +162,10 @@ class Game:
       if event.type == self.playerCooldownEvent:
         self.player.canAttack(True)
         pygame.time.set_timer(self.playerCooldownEvent, 0)
+      if event.type == self.playerBryanEvent:
+        self.player.giveBryan()
+        if self.player.hasPowerup():
+        pygame.time.set_timer(self.playerBryanEvent, 0)
 
       if buttonA == 1 and self.postGame == True and self.display.showKeyboard == False:
           self.reset()
@@ -261,7 +268,7 @@ class Game:
         if self.player.hasPowerup():
           self.initiateBryan()
           self.player.removePowerup()
-      
+          pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
       if (self.display.showKeyboard):
         self.keyboard.on_event(event)
 
@@ -371,6 +378,11 @@ class Game:
         b.moveToTarget()
       else: 
         self.bryans.remove(b)
+      docRects = list(map(lambda d: d.getRect(), self.docs))
+      coll = b.getRect().collidelist(docRects)
+      if coll >= 0:
+        self.homeBot.inTakeDoc(1)
+        self.hp.updateHealth(GLOBAL.DOC_INCREASE_HEALTH * 1)
 
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
@@ -402,6 +414,7 @@ class Game:
     self.player.emptyCollectedDocs()
     pygame.time.set_timer(self.compSpawnEvent, 0)
     pygame.time.set_timer(self.boxSpawnEvent, 0)
+    pygame.time.set_timer(self.playerBryanEvent, 0)
 
   def __del__(self):
     pygame.quit()

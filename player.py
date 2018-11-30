@@ -28,7 +28,7 @@ class Player:
     self.__moveY = 0
 
     self.__collectedDocs = 0
-    self.__carryingPowerup = True
+    self.__carryingPowerup = False
 
   def setWidth(self, value):
     self.__width = value
@@ -155,8 +155,7 @@ class Player:
     self.__collectedDocs = 0
 
   def giveBryan(self):
-    if self.__carryingPowerup == False:
-      self.__carryingPowerup == True
+    self.__carryingPowerup = True
 
   def hasPowerup(self):
     return self.__carryingPowerup
