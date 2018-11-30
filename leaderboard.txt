@@ -1,10 +1,10 @@
 457gfd,1000
 hello123,1000
 td,1000
+12345678,300
 Hamzah,100
 Binil,100
 Alex,100
 yoninja,49
 gyrrehjk,49
 azghjjj,49
-etl,0

@@ -14,6 +14,7 @@ from leaderboard import Leaderboard
 from vkeyboard import VKeyboardRenderer
 from vkeyboard import VKeyboardLayout
 from vkeyboard import VKeyboard
+import vkeyboard
 from homeBot import HomeBot
 from competitor import Competitor
 
@@ -69,6 +70,7 @@ class Game:
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
     self.keyboard.enable()
     self.text = ""
+    self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
 
   def reset(self):
     pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
@@ -144,6 +146,9 @@ class Game:
       elif event.type == pygame.KEYDOWN and self.postGame == True and self.display.showKeyboard == False:
         if event.key == pygame.K_SPACE:
           self.reset()
+          self.leaderboard.setReadLeaderboard(False)
+          vkeyboard.FINISHED = False
+          self.display.inserted = False
         
       elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
@@ -206,6 +211,7 @@ class Game:
         if (rect.collidelist(box_rects) < 0):
           self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
           break
+      self.boxAppearSound.play()
 
   def initializeBoxes(self):
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
