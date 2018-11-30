@@ -179,7 +179,7 @@ class Game:
     for b in self.boxes:
       if b.shouldHide(pygame.time.get_ticks()):
         self.boxes.remove(b)
-        boxBreakSound.play()
+        self.boxBreakSound.play()
       if self.player.getAttack() and self.player.getRect().colliderect(b.getRect()):
         docs = b.openBox()
         for d in docs:
@@ -195,7 +195,7 @@ class Game:
         self.player.collectDoc()
         self.docs.remove(d)
         docCollected = True
-        docCollectSound.play()
+        self.docCollectSound.play()
       elif d.shouldHide(pygame.time.get_ticks(),
       list(map(lambda c: c.getRect(), self.comps))):
         self.docs.remove(d)
@@ -212,7 +212,7 @@ class Game:
         if (rect.collidelist(box_rects) < 0):
           self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
           break
-      boxAppearSound.play()
+      self.boxAppearSound.play()
 
   def initializeBoxes(self):
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
@@ -279,7 +279,7 @@ class Game:
 
   def updatePostDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
-    self.leaderboard.setScore(self.homeBot.getDocNum() * 100)
+    self.leaderboard.setScore(int(self.homeBot.getDocNum() * 100))
     self.display.showEnterUsername(self.leaderboard, self.keyboard, self.text)
 
   def clear(self):
