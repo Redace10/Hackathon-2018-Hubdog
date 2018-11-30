@@ -14,8 +14,10 @@ from leaderboard import Leaderboard
 from vkeyboard import VKeyboardRenderer
 from vkeyboard import VKeyboardLayout
 from vkeyboard import VKeyboard
+import vkeyboard
 from homeBot import HomeBot
 from competitor import Competitor
+from bryan import Bryan
 
 class Game:
   def __init__(self):
@@ -50,9 +52,22 @@ class Game:
 
     # initialize player
     self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
+    self.diff = 0
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
+    self.playerBryanEvent = pygame.USEREVENT + 4
+    pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
+
+    # initialize jotstick
+    pygame.joystick.init()
+    self.joystick = pygame.joystick.Joystick(0)
+    self.joystick.init()
+
+
+    self.clock = pygame.time.Clock()
+    self.keepPlaying = True
+    self.bryans = []
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -72,10 +87,14 @@ class Game:
       ((255, 255, 255), (0, 0, 0)),
     )
 
+    self.increaseDifficultyEvent = pygame.USEREVENT + 5
+    pygame.time.set_timer(self.increaseDifficultyEvent, GLOBAL.INCREASE_DIFF_TIME)
+
     self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
     self.keyboard.enable()
     self.text = ""
+    self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
 
   def reset(self):
     pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
@@ -96,6 +115,9 @@ class Game:
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
+    pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
+
+    self.bryans = []
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -114,16 +136,29 @@ class Game:
       # (Optional) special key background color.
       ((255, 255, 255), (0, 0, 0)),
     )
+    self.diff = 0
+    pygame.time.set_timer(self.increaseDifficultyEvent, GLOBAL.INCREASE_DIFF_TIME)
+
 
     self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
     self.keyboard.enable()
     self.text = ""
 
+  def joystickMove(self, axis1, axis0):
+    if axis1 >= 0.8 or axis1 <= -0.8 or axis0 >= 0.8 or axis0 <= -0.8:
+      return True
+    else:
+      return False
+      
   def consumer(self, text):
     self.text = text
 
   def handleEvents(self):
+    axis1 = self.joystick.get_axis( 1 )
+    axis0 = self.joystick.get_axis( 0 )
+    buttonA = self.joystick.get_button( 0 )
+    buttonB = self.joystick.get_button( 1 )
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.keepPlaying = False
@@ -136,38 +171,117 @@ class Game:
       if event.type == self.playerCooldownEvent:
         self.player.canAttack(True)
         pygame.time.set_timer(self.playerCooldownEvent, 0)
+      if event.type == self.playerBryanEvent:
+        self.player.giveBryan()
+        if self.player.hasPowerup():
+          pygame.time.set_timer(self.playerBryanEvent, 0)
+      if event.type == self.increaseDifficultyEvent:
+        self.diff += 0.1
 
-      if event.type == pygame.KEYDOWN and self.player.getAttack() == False:
-        if event.key == pygame.K_LEFT:
-          self.player.setMoveLeft(True)
-        if event.key == pygame.K_RIGHT:
-          self.player.setMoveRight(True)
-        if event.key == pygame.K_UP:
-          self.player.setMoveUp(True)
-        if event.key == pygame.K_DOWN:
-          self.player.setMoveDown(True)
-        if event.key == pygame.K_SPACE:
-          self.player.setAttack(True)
-      elif event.type == pygame.KEYDOWN and self.postGame == True and self.display.showKeyboard == False:
-        if event.key == pygame.K_SPACE:
+      if buttonA == 1 and self.postGame == True and self.display.showKeyboard == False:
           self.reset()
-        
-      elif event.type == pygame.KEYUP:
-        if event.key == pygame.K_LEFT:
+          self.leaderboard.setReadLeaderboard(False)
+          vkeyboard.FINISHED = False
+          self.display.inserted = False
+      # move left -> axis0 <= -0.8
+      # move right -> axis0 >= 0.8
+      # move up -> axis1 <= -0.8
+      # move down -> axis1 >= 0.8
+      if self.joystickMove(axis1, axis0) and self.player.getAttack() == False:
+        if axis0 <= -0.8 and axis1 <= -0.8:
+          self.player.setMoveUp(True)
+          self.player.setMoveLeft(True)
+          self.player.setMoveRight(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'LEFTUP'
+        elif axis0 >= 0.8 and axis1 <= -0.8:
+          self.player.setMoveUp(True)
+          self.player.setMoveRight(True)
+          self.player.setMoveLeft(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'RIGHTUP'
+        elif axis0 <= -0.8 and axis1 >= 0.8:
+          self.player.setMoveLeft(True)
+          self.player.setMoveDown(True)
+          self.player.setMoveRight(False)
+          self.player.setMoveUp(False)
+          GLOBAL.CURRENT_DIR = 'LEFTDOWN'
+        elif axis0 >= 0.8 and axis1 >= 0.8:
+          self.player.setMoveRight(True)
+          self.player.setMoveDown(True)
+          self.player.setMoveLeft(False)
+          self.player.setMoveUp(False)
+          GLOBAL.CURRENT_DIR = 'RIGHTDOWN'
+        elif axis0 <= -0.8:
+          self.player.setMoveLeft(True)
+          self.player.setMoveRight(False)
+          self.player.setMoveUp(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'LEFT'
+        elif axis0 >= 0.8:
+          self.player.setMoveRight(True)
+          self.player.setMoveLeft(False)
+          self.player.setMoveUp(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'RIGHT'
+        elif axis1 <= -0.8:
+          self.player.setMoveUp(True)
+          self.player.setMoveDown(False)
+          self.player.setMoveLeft(False)
+          self.player.setMoveRight(False)
+          GLOBAL.CURRENT_DIR = 'UP'
+        elif axis1 >= 0.8:
+          self.player.setMoveDown(True)
+          self.player.setMoveUp(False)
+          self.player.setMoveLeft(False)
+          self.player.setMoveRight(False)
+          GLOBAL.CURRENT_DIR = 'DOWN'
+      else:
+        if GLOBAL.CURRENT_DIR == 'LEFTUP':
           self.player.resetMoveX()
           self.player.setMoveLeft(False)
-        if event.key == pygame.K_RIGHT:
-          self.player.resetMoveX()
-          self.player.setMoveRight(False)
-        if event.key == pygame.K_UP:
           self.player.resetMoveY()
           self.player.setMoveUp(False)
-        if event.key == pygame.K_DOWN:
+        elif GLOBAL.CURRENT_DIR == 'RIGHTUP':
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
+        elif GLOBAL.CURRENT_DIR == 'LEFTDOWN':
+          self.player.resetMoveX()
+          self.player.setMoveLeft(False)
           self.player.resetMoveY()
           self.player.setMoveDown(False)
-      
+        elif GLOBAL.CURRENT_DIR == 'RIGHTDOWN':
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
+        elif GLOBAL.CURRENT_DIR == 'LEFT' or GLOBAL.CURRENT_DIR == 'RIGHT':
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+        elif GLOBAL.CURRENT_DIR == 'UP' or GLOBAL.CURRENT_DIR == 'DOWN':
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
+        elif GLOBAL.CURRENT_DIR == None:
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+          self.player.setMoveLeft(False)
+          self.player.setMoveUp(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
+        GLOBAL.CURRENT_DIR = None
+      if buttonA == 1:
+        self.player.setAttack(True)
+      #if buttonA == 0:
+        #self.player.setAttack(False)
+      if buttonB == 1:
+        if self.player.hasPowerup():
+          self.initiateBryan()
+          self.player.removePowerup()
+          pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
       if (self.display.showKeyboard):
-        self.keyboard.on_event(event)
+        self.keyboard.on_event(event, axis1, axis0, buttonA)
 
     if (self.player.getMoveLeft()):
       self.player.moveX(-1)
@@ -200,8 +314,9 @@ class Game:
         docCollected = True
         self.docCollectSound.play()
       elif d.shouldHide(pygame.time.get_ticks(),
-      list(map(lambda c: c.getRect(), self.comps))):
-        self.docs.remove(d)
+      list(map(lambda c: c.getRect(), self.comps)),
+      list(map(lambda b: b.getRect(), self.bryans))):
+        self.docs.remove(d),
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
@@ -266,11 +381,28 @@ class Game:
       self.postGame = True
       self.keepPlaying = False
 
+  def initiateBryan(self):
+    rect = pygame.Rect(0, 100, GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT)
+    self.bryans.append(Bryan(rect))
+
+  def updateBryan(self):
+    for b in self.bryans:
+      if b.selectTarget(self.docs):
+        b.moveToTarget()
+      else: 
+        self.bryans.remove(b)
+      docRects = list(map(lambda d: d.getRect(), self.docs))
+      coll = b.getRect().collidelist(docRects)
+      if coll >= 0:
+        self.homeBot.inTakeDoc(1)
+        self.hp.updateHealth(GLOBAL.DOC_INCREASE_HEALTH * 1)
+
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
     self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)
+    self.display.drawBryans(self.bryans)
     #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
     self.display.drawDog(self.player, self.playerCooldownEvent)
     collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
@@ -279,7 +411,7 @@ class Game:
     #homeBot draw
     self.display.drawHomeBot(self.homeBot)
     #health bar draw
-    self.hp.updateHealth(GLOBAL.NORMAL_DECREASING_RATE)
+    self.hp.updateHealth(GLOBAL.NORMAL_DECREASING_RATE - self.diff)
     pygame.display.update()
 
   def updatePostDisplay(self):
@@ -295,6 +427,9 @@ class Game:
     self.player.emptyCollectedDocs()
     pygame.time.set_timer(self.compSpawnEvent, 0)
     pygame.time.set_timer(self.boxSpawnEvent, 0)
+    pygame.time.set_timer(self.playerBryanEvent, 0)
+    pygame.time.set_timer(self.increaseDifficultyEvent, 0)
+
 
   def __del__(self):
     pygame.quit()
@@ -305,6 +440,7 @@ while game.keepPlaying or game.postGame:
   while game.keepPlaying:
     game.updateHomebot()
     game.updateCompetitors()
+    game.updateBryan()
     game.updateBoxes()
     game.updateDocuments()
 

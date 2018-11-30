@@ -28,6 +28,7 @@ class Player:
     self.__moveY = 0
 
     self.__collectedDocs = 0
+    self.__carryingPowerup = False
 
   def setWidth(self, value):
     self.__width = value
@@ -152,4 +153,12 @@ class Player:
 
   def getHit(self):
     self.__collectedDocs = 0
+
+  def giveBryan(self):
+    self.__carryingPowerup = True
+
+  def hasPowerup(self):
+    return self.__carryingPowerup
   
+  def removePowerup(self):
+    self.__carryingPowerup = False

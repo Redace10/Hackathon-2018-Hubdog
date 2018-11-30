@@ -4,7 +4,7 @@ ref,1400
 hello123,1000
 td,1000
 aqwwww,200
+zer,200
 Hamzah,100
 Binil,100
 Alex,100
-yoninja,49
