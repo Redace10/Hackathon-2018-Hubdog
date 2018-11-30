@@ -16,6 +16,7 @@ from vkeyboard import VKeyboardLayout
 from vkeyboard import VKeyboard
 from homeBot import HomeBot
 from competitor import Competitor
+from bryan import Bryan
 
 class Game:
   def __init__(self):
@@ -46,6 +47,8 @@ class Game:
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
+
+    self.bryans = []
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -89,6 +92,8 @@ class Game:
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
+
+    self.bryans = []
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -141,6 +146,9 @@ class Game:
           self.player.setMoveDown(True)
         if event.key == pygame.K_SPACE:
           self.player.setAttack(True)
+        if event.key == pygame.K_c:
+          if self.player.hasPowerup() == True:
+            self.initiateBryan()
       elif event.type == pygame.KEYDOWN and self.postGame == True and self.display.showKeyboard == False:
         if event.key == pygame.K_SPACE:
           self.reset()
@@ -191,8 +199,9 @@ class Game:
         self.docs.remove(d)
         docCollected = True
       elif d.shouldHide(pygame.time.get_ticks(),
-      list(map(lambda c: c.getRect(), self.comps))):
-        self.docs.remove(d)
+      list(map(lambda c: c.getRect(), self.comps)),
+      list(map(lambda b: b.getRect(), self.bryans))):
+        self.docs.remove(d),
 
   def spawnBox(self):
     for i in range(self.boxSpawnRate):
@@ -254,11 +263,23 @@ class Game:
       self.postGame = True
       self.keepPlaying = False
 
+  def initiateBryan(self):
+    rect = pygame.Rect(0, 100, GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT)
+    self.bryans.append(Bryan(rect))
+
+  def updateBryan(self):
+    for b in self.bryans:
+      if b.selectTarget(self.docs):
+        b.moveToTarget()
+      else: 
+        self.bryans.remove(b)
+
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
     self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)
+    self.display.drawBryans(self.bryans)
     #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
     self.display.drawDog(self.player, self.playerCooldownEvent)
     collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
@@ -293,6 +314,7 @@ while game.keepPlaying or game.postGame:
   while game.keepPlaying:
     game.updateHomebot()
     game.updateCompetitors()
+    game.updateBryan()
     game.updateBoxes()
     game.updateDocuments()
 

@@ -82,6 +82,13 @@ class Display:
     comp = pygame.image.load('assets/enemy/veryfi.png')
     self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
 
+    # bryan Assets:
+    bryan1 = pygame.image.load('assets/bryan/bryan1.png')
+    bryan1 = pygame.transform.scale(bryan1, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
+    bryan2 = pygame.image.load('assets/bryan/bryan2.png')
+    bryan2 = pygame.transform.scale(bryan2, (GLOBAL.BRYAN_WIDTH, GLOBAL.BRYAN_HEIGHT))
+    self.bryans = [bryan1, bryan2]
+
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
 
@@ -97,6 +104,10 @@ class Display:
 
     self.gameDisplay = pygame.display.set_mode((GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.showKeyboard = False
+
+  def drawBryans(self, bryans):
+    for b in bryans:
+      self.gameDisplay.blit(self.bryans[0], b.getRect())
 
   def drawBoxes(self, boxes):
     for b in boxes:

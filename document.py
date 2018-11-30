@@ -28,8 +28,8 @@ class Document:
   def setDuration(self, currentTime, duration):
     self.__endTime = currentTime + duration
 
-  def shouldHide(self, currentTime, compRects):
-    if currentTime >= self.__endTime or self.__rect.collidelist(compRects) >= 0:
+  def shouldHide(self, currentTime, compRects, bryRects):
+    if currentTime >= self.__endTime or self.__rect.collidelist(compRects) >= 0 or self.__rect.collidelist(bryRects) >= 0:
       return True
     return False
 
