@@ -34,8 +34,8 @@ class Game:
     self.boxBreakSound = pygame.mixer.Sound('assets/sounds/boxBreak.wav')
     self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
     self.docCollectSound = pygame.mixer.Sound('assets/sounds/docFetched.wav')
-    self.bryanSound = pygame.mixer.Sounds('assets/sounds/codeReviewBryanSong.wav')
-    self.playerDamageSound = pygame.mixer.Sounds('assets/sounds/playerDamage.wav')
+    self.bryanSound = pygame.mixer.Sound('assets/sounds/codeReviewBryanSong.wav')
+    self.playerDamageSound = pygame.mixer.Sound('assets/sounds/playerDamage.wav')
     # initialize Hp bar
     self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
 
@@ -183,6 +183,8 @@ class Game:
           self.leaderboard.setReadLeaderboard(False)
           vkeyboard.FINISHED = False
           self.display.inserted = False
+      if buttonB == 1 and self.postGame == True and self.display.showKeyboard == False:
+          self.postGame = False
       # move left -> axis0 <= -0.8
       # move right -> axis0 >= 0.8
       # move up -> axis1 <= -0.8
@@ -278,6 +280,7 @@ class Game:
       if buttonB == 1:
         if self.player.hasPowerup():
           self.initiateBryan()
+          self.bryanSound.play()
           self.player.removePowerup()
           pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
       if (self.display.showKeyboard):
@@ -389,7 +392,8 @@ class Game:
     for b in self.bryans:
       if b.selectTarget(self.docs):
         b.moveToTarget()
-      else: 
+      else:
+        self.bryanSound.stop() 
         self.bryans.remove(b)
       docRects = list(map(lambda d: d.getRect(), self.docs))
       coll = b.getRect().collidelist(docRects)
