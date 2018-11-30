@@ -66,7 +66,14 @@ class Display:
       self.gameDisplay.blit(self.banks[b.getSize()][b.getLogo()], b.getRect())
   
   # pass in the hp class into this function
-  def drawHp(self, hp):
+  def drawHp(self, hp, hpValue):
     hp.setGameDisplay(self.gameDisplay)
-    hp.healthBarMain(100)
+    hp.healthBarMain(hpValue)
+  
+  def drawHomeBot(self,homeBot):
+    homeBot.setGameDisplay(self.gameDisplay)
+    homeBotIcon = pygame.image.load('assets/homeBot.png')
+    homeBotIcon = pygame.transform.scale(homeBotIcon, (100, 200))
+    playerRect = homeBotIcon.get_rect(center=(25, 500))
+    self.gameDisplay.blit(homeBotIcon, playerRect)
 

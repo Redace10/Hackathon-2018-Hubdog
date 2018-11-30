@@ -3,9 +3,11 @@ import os
 import random
 import numpy as np
 
-from hpScore import Hp
+from hp import Hp
+from player import Player
 from display import Display
 from box import Box
+from homeBot import HomeBot
 
 WIDTH = 800
 HEIGHT = 600
@@ -13,6 +15,7 @@ HEIGHT = 600
 BOX_WIDTH = 60
 BOX_HEIGHT = 60
 BOX_DIST = 10
+NORMAL_DECREASING_RATE = 5
 
 class Game:
   def __init__(self):
@@ -28,7 +31,10 @@ class Game:
     player = Player(135, 115, 5, 0)
 
     # initialize Hp bar
-    self.hp = Hp(100)
+    self.hp = Hp(760) # the full health is 760
+
+    # initialize Home robot
+    self.homeBot = HomeBot()
 
     # initialize display
     self.display = Display(pygame, 135, 115, WIDTH, HEIGHT, BOX_WIDTH, BOX_HEIGHT)
@@ -80,6 +86,8 @@ class Game:
 game = Game()
 while game.keepPlaying:
   game.display.drawBoxes(game.boxes)
-  game.display.drawHp(game.hp)
+  game.display.drawHp(game.hp, game.hp.health) # we going to have some function to decrease the health
+  game.display.drawHomeBot(game.homeBot)
+  game.hp.updateHealth(NORMAL_DECREASING_RATE)
   pygame.display.update()
   game.handleEvents()
