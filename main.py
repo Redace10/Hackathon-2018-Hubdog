@@ -22,6 +22,10 @@ class Game:
     # pygame.mixer.music.load("The Marching Pirate Spy.mp3")
     # pygame.mixer.music.play(-1, 0)
 
+    self.boxBreakSound = pygame.mixer.Sound('assets/sounds/boxBreak.wav')
+    self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
+    self.docCollectSound = pygame.mixer.Sound('assets/sounds/docFetched.wav')
+
     # initialize Hp bar
     self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
 
@@ -97,6 +101,7 @@ class Game:
     for b in self.boxes:
       if b.shouldHide(pygame.time.get_ticks()):
         self.boxes.remove(b)
+        boxBreakSound.play()
       if self.player.getAttack() and self.player.getRect().colliderect(b.getRect()):
         docs = b.openBox()
         for d in docs:
@@ -112,6 +117,7 @@ class Game:
         self.player.collectDoc()
         self.docs.remove(d)
         docCollected = True
+        docCollectSound.play()
       elif d.shouldHide(pygame.time.get_ticks(),
       list(map(lambda c: c.getRect(), self.comps))):
         self.docs.remove(d)
@@ -128,6 +134,7 @@ class Game:
         if (rect.collidelist(box_rects) < 0):
           self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
           break
+      boxAppearSound.play()
 
   def initializeBoxes(self):
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
