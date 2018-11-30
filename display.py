@@ -3,6 +3,7 @@ import GLOBAL
 
 class Display:
   def __init__(self, pygame):
+    self.fontObj = pygame.font.Font('assets/PressStart2P.ttf', 20)
     self.border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
     self.dogImages = []
     self.dogIndex = 0
@@ -108,5 +109,28 @@ class Display:
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
-    
 
+  def drawWord(self, text, x, y, colours):
+    word_surface = self.fontObj.render(text, True, colours[0])
+    word_rect = word_surface.get_rect()
+    word_rect.center  = (x, y)
+    word_outline = self.fontObj.render(text, True, colours[1])
+    outline_rect = word_outline.get_rect()
+    outline_rect.center = (x - 1, y)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x + 1, y)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x - 1, y - 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x - 1, y + 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x + 1, y - 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x + 1, y + 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x, y - 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x, y + 2)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    self.gameDisplay.blit(word_surface, word_rect)
+    return word_rect

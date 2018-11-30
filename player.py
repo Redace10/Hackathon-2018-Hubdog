@@ -21,6 +21,8 @@ class Player:
     self.__moveX = 0
     self.__moveY = 0
 
+    self.__collectedDocs = 0
+
   def setWidth(self, value):
     self.__width = value
 
@@ -62,6 +64,12 @@ class Player:
 
   def getAttack(self):
     return self.__attack
+
+  def collectDoc(self):
+    self.__collectedDocs += 1
+
+  def getCollectedDocs(self):
+    return self.__collectedDocs
   
   # move directions
   def setMoveLeft(self, value):

@@ -87,10 +87,13 @@ class Game:
 
   def updateDocuments(self):
     for d in self.docs:
+      docCollected = False
       if d.getSpread() == True:
         d.spread()
-      elif self.player.getRect().colliderect(d.getRect()):
+      elif self.player.getRect().colliderect(d.getRect()) and docCollected == False:
+        self.player.collectDoc()
         self.docs.remove(d)
+        docCollected = True
       if d.shouldHide(pygame.time.get_ticks()):
         self.docs.remove(d)
 
@@ -127,8 +130,10 @@ class Game:
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
     self.display.drawDocuments(self.docs)
-    pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
+    #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
     self.display.drawDog(self.player)
+    collectedDocs = 'Fetched docs:%d'% self.player.getCollectedDocs()
+    self.display.drawWord(collectedDocs, 160, 20, [(255, 255, 0), (0, 0, 255)])
     pygame.display.update()
 
   def __del__(self):
