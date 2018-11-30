@@ -12,12 +12,13 @@ class Competitor:
   def getRect(self):
     return self.__rect
 
-  def selectTarget(self, docs):
+  def selectTarget(self, docs, player):
     if self.__target and docs.count(self.__target) > 0:
       return True
     else:
       if len(docs) == 0:
-        return False
+        self.__target = player
+        return True
       minDistance = GLOBAL.MAP_WIDTH
       self.__target = None
       for d in docs:
@@ -32,7 +33,8 @@ class Competitor:
         self.__target.setTargeted(True)
         return True
       else:
-        return False
+        self.__target = player
+        return True
 
   def moveToTarget(self):
     if self.__target != None:

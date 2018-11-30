@@ -140,12 +140,13 @@ class Game:
 
   def spawnCompetitors(self):
     for i in range(self.compSpawnRate):
-      rect = pygame.Rect(10, 10, GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT)
+      loc = random.choice(GLOBAL.COMP_SPAWNS)
+      rect = pygame.Rect(loc[0], loc[1], GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT)
       self.comps.append(Competitor('veryfi', rect, GLOBAL.COMP_SPEED))
 
   def updateCompetitors(self):
     for c in self.comps:
-      if c.selectTarget(self.docs):
+      if c.selectTarget(self.docs, self.player):
         c.moveToTarget()
       if self.player.getAttack() and self.player.getRect().colliderect(c.getRect()):
         self.comps.remove(c)
