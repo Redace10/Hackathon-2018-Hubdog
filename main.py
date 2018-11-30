@@ -98,7 +98,8 @@ class Game:
         self.player.collectDoc()
         self.docs.remove(d)
         docCollected = True
-      if d.shouldHide(pygame.time.get_ticks()):
+      elif d.shouldHide(pygame.time.get_ticks(),
+      list(map(lambda c: c.getRect(), self.comps))):
         self.docs.remove(d)
 
   def spawnBox(self):
@@ -146,9 +147,13 @@ class Game:
     for c in self.comps:
       if c.selectTarget(self.docs):
         c.moveToTarget()
+      if self.player.getAttack() and self.player.getRect().colliderect(c.getRect()):
+        self.comps.remove(c)
+      elif self.player.getRect().colliderect(c.getRect()):
+        self.player.getHit()
 
   def updateDisplay(self):
-    pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
+    pygame.draw.rect(self.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
     self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)

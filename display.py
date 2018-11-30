@@ -4,7 +4,6 @@ import GLOBAL
 class Display:
   def __init__(self, pygame):
     self.fontObj = pygame.font.Font('assets/PressStart2P.ttf', 20)
-    self.border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
@@ -65,7 +64,7 @@ class Display:
     # Competitor Assets
     comp = pygame.image.load('assets/enemy/veryfi.png')
     self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
-    
+
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
 
@@ -106,7 +105,6 @@ class Display:
     if (dog.getMoveLeft() or dog.getMoveRight() or dog.getMoveUp() or dog.getMoveDown()):
       self.dogIndex += 1
     
-    dog.getRect().clamp_ip(self.border)
     if (dog.getAttack()):
       if (self.dogFace == 0):
         dogImage = self.dogImages[2]

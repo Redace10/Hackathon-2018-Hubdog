@@ -1,10 +1,14 @@
+import GLOBAL
+
 class Player:
   def __init__(self, width, height, speed, direction):
     self.__width = width
     self.__height = height
     self.__speed = speed
     self.__initialSpeed = speed
-    
+    self.__border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
+
+
     self.__directionX = 0  # 0 = left, 1 = right
     self.__directionY = 0  # 0 = up, 1 = down
 
@@ -106,10 +110,13 @@ class Player:
   def moveX(self, dir):
     self.__moveX = dir * self.__speed
     self.__rect.move_ip(self.__moveX, 0)
+    self.__rect.clamp_ip(self.__border)
 
   def moveY(self, dir):
     self.__moveY = dir * self.__speed
     self.__rect.move_ip(0, self.__moveY)
+    self.__rect.clamp_ip(self.__border)
+
 
   def resetMoveX(self):
     self.__moveX = 0
@@ -131,4 +138,7 @@ class Player:
       self.__attack = False
       self.resetMoveX()
       self.resetMoveY()
+
+  def getHit(self):
+    self.__collectedDocs = 0
   

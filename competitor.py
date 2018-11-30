@@ -37,15 +37,15 @@ class Competitor:
   def moveToTarget(self):
     if self.__target != None:
       targetRect = self.__target.getRect()
-      if targetRect.x < self.__rect.x:
+      if targetRect.center[0] < self.__rect.center[0] - self.__speed:
         xOffset = -1 * self.__speed
-      elif targetRect.x > self.__rect.x:
+      elif targetRect.center[0] > self.__rect.center[0] + self.__speed:
         xOffset = 1 * self.__speed
       else: 
         xOffset = 0
-      if targetRect.y < self.__rect.y:
+      if targetRect.center[1] < self.__rect.center[1] - self.__speed:
         yOffset = -1 * self.__speed
-      elif targetRect.y > self.__rect.y:
+      elif targetRect.center[1] > self.__rect.center[1] + self.__speed:
         yOffset = 1 * self.__speed
       else: 
         yOffset = 0
