@@ -201,6 +201,7 @@ class Display:
       self.drawWord(score["name"], 900, spacing, ((WHITE, DARK_GREEN)), self.fontData)
       spacing += 50
       rank += 1
+    self.drawWord("Game over. Press A to play again", GLOBAL.MAP_WIDTH/2, spacing + 50, ((RED, RED)), self.fontData)
 
   def drawWord(self, text, x, y, colours, font=None):
     if font == None:

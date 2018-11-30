@@ -165,7 +165,7 @@ class Game:
       if event.type == self.playerBryanEvent:
         self.player.giveBryan()
         if self.player.hasPowerup():
-        pygame.time.set_timer(self.playerBryanEvent, 0)
+          pygame.time.set_timer(self.playerBryanEvent, 0)
 
       if buttonA == 1 and self.postGame == True and self.display.showKeyboard == False:
           self.reset()
@@ -270,7 +270,7 @@ class Game:
           self.player.removePowerup()
           pygame.time.set_timer(self.playerBryanEvent, GLOBAL.BRYAN_COOLDOWN)
       if (self.display.showKeyboard):
-        self.keyboard.on_event(event)
+        self.keyboard.on_event(event, axis1, axis0, buttonA)
 
     if (self.player.getMoveLeft()):
       self.player.moveX(-1)

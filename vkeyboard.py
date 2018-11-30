@@ -24,6 +24,7 @@ keyboard.enable()
 
 import logging
 import pygame
+import GLOBAL
 from os.path import join, dirname
 from pygame.locals import *
 
@@ -666,29 +667,36 @@ class VKeyboard(object):
         else:
             self.set_layout(self.original_layout)
         self.invalidate()
+    
+    def joystickMove(self, axis1, axis0):
+        if axis1 >= 0.8 or axis1 <= -0.8 or axis0 >= 0.8 or axis0 <= -0.8:
+            return True
+        else:
+            return False
 
-    def on_event(self, event):
+    def on_event(self, event, axis1, axis0, buttonA):
         """Pygame event processing callback method.
 
         :param event: Event to process.
         """
         if self.state > 0:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    self.on_key_up()
-                    self.key = self.layout.get_key_at(-1, 0)
-                elif event.key == pygame.K_RIGHT:
-                    self.on_key_up()
-                    self.key = self.layout.get_key_at(1, 0)
-                elif event.key == pygame.K_UP:
-                    self.on_key_up()
-                    self.key = self.layout.get_key_at(0, -1)
-                elif event.key == pygame.K_DOWN:
-                    self.on_key_up()
-                    self.key = self.layout.get_key_at(0, 1)
-                elif event.key == pygame.K_SPACE:
-                    self.pressed_space()
-                
+            if axis0 <= -0.8 and not GLOBAL.NAME_MOVED:
+                self.on_key_up()
+                self.key = self.layout.get_key_at(-1, 0)
+            elif axis0 >= 0.8 and not GLOBAL.NAME_MOVED:
+                self.on_key_up()
+                self.key = self.layout.get_key_at(1, 0)
+            elif axis1 <= -0.8 and not GLOBAL.NAME_MOVED:
+                self.on_key_up()
+                self.key = self.layout.get_key_at(0, -1)
+            elif axis1 >= 0.8 and not GLOBAL.NAME_MOVED:
+                self.on_key_up()
+                self.key = self.layout.get_key_at(0, 1)
+            elif buttonA == 1 and not GLOBAL.NAME_MOVED:
+                self.pressed_space()
+            GLOBAL.NAME_MOVED = True
+            if not self.joystickMove(axis1, axis0) and buttonA == 0:
+                GLOBAL.NAME_MOVED = False   
             self.on_key_down(self.key)
                 
     def set_key_state(self, key, state):
