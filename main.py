@@ -41,10 +41,137 @@ class Game:
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.playerCooldownEvent = pygame.USEREVENT + 3
 
+    # initialize jotstick
+    pygame.joystick.init()
+    self.joystick = pygame.joystick.Joystick(0)
+    self.joystick.init()
+
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
+  def joystickMove(self, axis1, axis0):
+    if axis1 >= 0.8 or axis1 <= -0.8 or axis0 >= 0.8 or axis0 <= -0.8:
+      return True
+    else:
+      return False
 
+  def handleEvents(self):
+    axis1 = self.joystick.get_axis( 1 )
+    axis0 = self.joystick.get_axis( 0 )
+    buttonA = self.joystick.get_button( 0 )
+    buttonB = self.joystick.get_button( 1 )
+    print(GLOBAL.CURRENT_DIR)
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        self.keepPlaying = False
+      if event.type == self.boxSpawnEvent:
+        self.spawnBox()
+      if event.type == self.compSpawnEvent:
+        self.spawnCompetitors()
+      if event.type == self.playerCooldownEvent:
+        self.player.canAttack(True)
+        pygame.time.set_timer(self.playerCooldownEvent, 0)
+      # move left -> axis0 <= -0.8
+      # move right -> axis0 >= 0.8
+      # move up -> axis1 <= -0.8
+      # move down -> axis1 >= 0.8
+      if self.joystickMove(axis1, axis0) and self.player.getAttack() == False:
+        if axis0 <= -0.8 and axis1 <= -0.8:
+          self.player.setMoveUp(True)
+          self.player.setMoveLeft(True)
+          self.player.setMoveRight(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'LEFTUP'
+        elif axis0 >= 0.8 and axis1 <= -0.8:
+          self.player.setMoveUp(True)
+          self.player.setMoveRight(True)
+          self.player.setMoveLeft(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'RIGHTUP'
+        elif axis0 <= -0.8 and axis1 >= 0.8:
+          self.player.setMoveLeft(True)
+          self.player.setMoveDown(True)
+          self.player.setMoveRight(False)
+          self.player.setMoveUp(False)
+          GLOBAL.CURRENT_DIR = 'LEFTDOWN'
+        elif axis0 >= 0.8 and axis1 >= 0.8:
+          self.player.setMoveRight(True)
+          self.player.setMoveDown(True)
+          self.player.setMoveLeft(False)
+          self.player.setMoveUp(False)
+          GLOBAL.CURRENT_DIR = 'RIGHTDOWN'
+        elif axis0 <= -0.8:
+          self.player.setMoveLeft(True)
+          self.player.setMoveRight(False)
+          self.player.setMoveUp(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'LEFT'
+        elif axis0 >= 0.8:
+          self.player.setMoveRight(True)
+          self.player.setMoveLeft(False)
+          self.player.setMoveUp(False)
+          self.player.setMoveDown(False)
+          GLOBAL.CURRENT_DIR = 'RIGHT'
+        elif axis1 <= -0.8:
+          self.player.setMoveUp(True)
+          self.player.setMoveDown(False)
+          self.player.setMoveLeft(False)
+          self.player.setMoveRight(False)
+          GLOBAL.CURRENT_DIR = 'UP'
+        elif axis1 >= 0.8:
+          self.player.setMoveDown(True)
+          self.player.setMoveUp(False)
+          self.player.setMoveLeft(False)
+          self.player.setMoveRight(False)
+          GLOBAL.CURRENT_DIR = 'DOWN'
+      else:
+        if GLOBAL.CURRENT_DIR == 'LEFTUP':
+          self.player.resetMoveX()
+          self.player.setMoveLeft(False)
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
+        elif GLOBAL.CURRENT_DIR == 'RIGHTUP':
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
+        elif GLOBAL.CURRENT_DIR == 'LEFTDOWN':
+          self.player.resetMoveX()
+          self.player.setMoveLeft(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
+        elif GLOBAL.CURRENT_DIR == 'RIGHTDOWN':
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
+        elif GLOBAL.CURRENT_DIR == 'LEFT' or GLOBAL.CURRENT_DIR == 'RIGHT':
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+        elif GLOBAL.CURRENT_DIR == 'UP' or GLOBAL.CURRENT_DIR == 'DOWN':
+          self.player.resetMoveY()
+          self.player.setMoveUp(False)
+        elif GLOBAL.CURRENT_DIR == None:
+          self.player.resetMoveX()
+          self.player.setMoveRight(False)
+          self.player.setMoveLeft(False)
+          self.player.setMoveUp(False)
+          self.player.resetMoveY()
+          self.player.setMoveDown(False)
+        GLOBAL.CURRENT_DIR = None
+      if buttonA == 1:
+        self.player.setAttack(True)
+      if buttonA == 0:
+        self.player.setAttack(False)
+    if (self.player.getMoveLeft()):
+      self.player.moveX(-1)
+    if (game.player.getMoveRight()):
+      self.player.moveX(1)
+    if (game.player.getMoveUp()):
+      self.player.moveY(-1)
+    if (game.player.getMoveDown()):
+      self.player.moveY(1)
+    '''
   def handleEvents(self):
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -92,7 +219,7 @@ class Game:
       self.player.moveY(-1)
     if (game.player.getMoveDown()):
       self.player.moveY(1)
-
+ '''
   def updateBoxes(self):
     for b in self.boxes:
       if b.shouldHide(pygame.time.get_ticks()):
