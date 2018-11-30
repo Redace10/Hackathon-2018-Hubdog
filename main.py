@@ -22,7 +22,7 @@ class Game:
     # pygame.mixer.music.play(-1, 0)
 
     # initialize Hp bar
-    self.hp = Hp(760) # the full health is 760
+    self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
 
     # initialize Home robot
     self.homeBot = HomeBot()
