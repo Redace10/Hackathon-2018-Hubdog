@@ -163,6 +163,9 @@ class Game:
         self.player.setAttack(True)
       if buttonA == 0:
         self.player.setAttack(False)
+      if buttonB == 1:
+        if self.player.hasPowerup():
+          self.initiateBryan()
     if (self.player.getMoveLeft()):
       self.player.moveX(-1)
     if (game.player.getMoveRight()):
@@ -171,55 +174,7 @@ class Game:
       self.player.moveY(-1)
     if (game.player.getMoveDown()):
       self.player.moveY(1)
-    '''
-  def handleEvents(self):
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        self.keepPlaying = False
 
-      if event.type == self.boxSpawnEvent:
-        self.spawnBox()
-      if event.type == self.compSpawnEvent:
-        self.spawnCompetitors()
-      if event.type == self.playerCooldownEvent:
-        self.player.canAttack(True)
-        pygame.time.set_timer(self.playerCooldownEvent, 0)
-
-      if event.type == pygame.KEYDOWN and self.player.getAttack() == False:
-        if event.key == pygame.K_LEFT:
-          self.player.setMoveLeft(True)
-        if event.key == pygame.K_RIGHT:
-          self.player.setMoveRight(True)
-        if event.key == pygame.K_UP:
-          self.player.setMoveUp(True)
-        if event.key == pygame.K_DOWN:
-          self.player.setMoveDown(True)
-        if event.key == pygame.K_SPACE:
-          self.player.setAttack(True)
-        
-      elif event.type == pygame.KEYUP:
-        if event.key == pygame.K_LEFT:
-          self.player.resetMoveX()
-          self.player.setMoveLeft(False)
-        if event.key == pygame.K_RIGHT:
-          self.player.resetMoveX()
-          self.player.setMoveRight(False)
-        if event.key == pygame.K_UP:
-          self.player.resetMoveY()
-          self.player.setMoveUp(False)
-        if event.key == pygame.K_DOWN:
-          self.player.resetMoveY()
-          self.player.setMoveDown(False)
-
-    if (self.player.getMoveLeft()):
-      self.player.moveX(-1)
-    if (game.player.getMoveRight()):
-      self.player.moveX(1)
-    if (game.player.getMoveUp()):
-      self.player.moveY(-1)
-    if (game.player.getMoveDown()):
-      self.player.moveY(1)
- '''
   def updateBoxes(self):
     for b in self.boxes:
       if b.shouldHide(pygame.time.get_ticks()):
