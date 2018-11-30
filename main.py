@@ -14,6 +14,7 @@ from leaderboard import Leaderboard
 from vkeyboard import VKeyboardRenderer
 from vkeyboard import VKeyboardLayout
 from vkeyboard import VKeyboard
+import vkeyboard
 from homeBot import HomeBot
 from competitor import Competitor
 from bryan import Bryan
@@ -84,6 +85,7 @@ class Game:
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
     self.keyboard.enable()
     self.text = ""
+    self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
 
   def reset(self):
     pygame.draw.rect(game.display.gameDisplay, (0, 0, 100), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
@@ -160,6 +162,9 @@ class Game:
 
       if buttonA == 1 and self.postGame == True and self.display.showKeyboard == False:
           self.reset()
+          self.leaderboard.setReadLeaderboard(False)
+          vkeyboard.FINISHED = False
+          self.display.inserted = False
       # move left -> axis0 <= -0.8
       # move right -> axis0 >= 0.8
       # move up -> axis1 <= -0.8

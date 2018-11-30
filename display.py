@@ -23,7 +23,7 @@ class Display:
     self.fontHighScore = pygame.font.Font('assets/PressStart2P.ttf', 50)
     self.fontColumn = pygame.font.Font('assets/PressStart2P.ttf', 30)
     self.fontData = pygame.font.Font('assets/PressStart2P.ttf', 20)
-
+    
     leftImages = []
     rightImages = []
     bigBanks = {}
@@ -104,6 +104,7 @@ class Display:
 
     self.gameDisplay = pygame.display.set_mode((GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.showKeyboard = False
+    self.replace = False
 
   def drawBryans(self, bryans):
     for b in bryans:
@@ -154,27 +155,27 @@ class Display:
       self.gameDisplay.blit(dogImage, dog.getRect())
 
   def showEnterUsername(self, leaderboard, keyboard, text):
-    enterUsername = True
     if (not leaderboard.getReadLeaderboard()):
-      enterUsername = leaderboard.updateLeaderboard()
+      self.replace = leaderboard.updateLeaderboard()
       leaderboard.setReadLeaderboard(True)
 
-    if (enterUsername):
-      if (not vkeyboard.FINISHED):
-        self.showKeyboard = True
-        keyboard.draw()
-        spacing = 225
-        for index in range(8):
-          self.drawWord("_", spacing, 250, ((RED, RED)), self.fontHighScore)
-          if (index < len(text)):
-            self.drawWord(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
-          spacing += 75
-      if (vkeyboard.FINISHED and not self.inserted):
-        if (len(leaderboard.getScoreList()) <= leaderboard.getMaxList()):
-          del leaderboard.getScoreList()[-1]
-        leaderboard.setUsername(text)
-        leaderboard.insertScore()
-        self.inserted = True
+    if (not vkeyboard.FINISHED):
+      self.showKeyboard = True
+      keyboard.draw()
+      spacing = 225
+      for index in range(8):
+        self.drawWord("_", spacing, 250, ((RED, RED)), self.fontHighScore)
+        if (index < len(text)):
+          self.drawWord(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
+        spacing += 75
+
+    if (vkeyboard.FINISHED and not self.inserted and self.replace):
+      if (len(leaderboard.getScoreList()) <= leaderboard.getMaxList()):
+        del leaderboard.getScoreList()[-1]
+      leaderboard.setUsername(text)
+      leaderboard.insertScore()
+      self.inserted = True
+      self.replace = False
     
     if (vkeyboard.FINISHED):
       self.showLeaderboard(leaderboard)
