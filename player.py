@@ -7,7 +7,7 @@ class Player:
     self.__height = height
     self.__speed = speed
     self.__initialSpeed = speed
-    self.__border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 50)
+    self.__border = (0, 10, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT - 80)
 
 
     self.__directionX = 0  # 0 = left, 1 = right

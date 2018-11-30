@@ -11,6 +11,7 @@ class Hp:
     green = (0, 255, 0)
 
     def __init__(self, hp):
+        self.__maxHealth = hp
         self.health = hp
 
     def getHp(self):
@@ -20,6 +21,8 @@ class Hp:
         # here we need to figure out a logic of how 
         # HP bar decreases over time
         self.health = self.health + value
+        if self.health > self.__maxHealth:
+          self.health = self.__maxHealth
     
     def setGameDisplay(self, gameDisplay):
         self.gameDisplay = gameDisplay
