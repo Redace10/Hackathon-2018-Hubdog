@@ -49,6 +49,7 @@ class Game:
 
     # initialize player
     self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
+    self.diff = 0
     self.player.setRect(self.display.dogImages[0][0].get_rect())
     self.leaderboard = Leaderboard()
     self.playerCooldownEvent = pygame.USEREVENT + 3
@@ -82,6 +83,9 @@ class Game:
       # (Optional) special key background color.
       ((255, 255, 255), (0, 0, 0)),
     )
+
+    self.increaseDifficultyEvent = pygame.USEREVENT + 5
+    pygame.time.set_timer(self.increaseDifficultyEvent, GLOBAL.INCREASE_DIFF_TIME)
 
     self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
@@ -129,6 +133,9 @@ class Game:
       # (Optional) special key background color.
       ((255, 255, 255), (0, 0, 0)),
     )
+    self.diff = 0
+    pygame.time.set_timer(self.increaseDifficultyEvent, GLOBAL.INCREASE_DIFF_TIME)
+
 
     self.layout = VKeyboardLayout(VKeyboardLayout.AZERTY, allow_uppercase=False, key_size=100, allow_special_chars=False)
     self.keyboard = VKeyboard(self.display.gameDisplay, self.consumer, self.layout, renderer=self.renderer)
@@ -149,7 +156,6 @@ class Game:
     axis0 = self.joystick.get_axis( 0 )
     buttonA = self.joystick.get_button( 0 )
     buttonB = self.joystick.get_button( 1 )
-    #print(GLOBAL.CURRENT_DIR)
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.keepPlaying = False
@@ -166,6 +172,8 @@ class Game:
         self.player.giveBryan()
         if self.player.hasPowerup():
           pygame.time.set_timer(self.playerBryanEvent, 0)
+      if event.type == self.increaseDifficultyEvent:
+        self.diff += 0.1
 
       if buttonA == 1 and self.postGame == True and self.display.showKeyboard == False:
           self.reset()
@@ -398,7 +406,7 @@ class Game:
     #homeBot draw
     self.display.drawHomeBot(self.homeBot)
     #health bar draw
-    self.hp.updateHealth(GLOBAL.NORMAL_DECREASING_RATE)
+    self.hp.updateHealth(GLOBAL.NORMAL_DECREASING_RATE - self.diff)
     pygame.display.update()
 
   def updatePostDisplay(self):
@@ -415,6 +423,8 @@ class Game:
     pygame.time.set_timer(self.compSpawnEvent, 0)
     pygame.time.set_timer(self.boxSpawnEvent, 0)
     pygame.time.set_timer(self.playerBryanEvent, 0)
+    pygame.time.set_timer(self.increaseDifficultyEvent, 0)
+
 
   def __del__(self):
     pygame.quit()
