@@ -24,13 +24,16 @@ class Game:
     pygame.init()
 
     # plays background song repeatedly
-    # pygame.mixer.music.load("The Marching Pirate Spy.mp3")
-    # pygame.mixer.music.play(-1, 0)
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/sounds/backgroundMusic.wav")
+    pygame.mixer.music.play(-1, 0.0)
 
+    self.beatEnemySound = pygame.mixer.Sound('assets/sounds/beatEnemy.wav')
     self.boxBreakSound = pygame.mixer.Sound('assets/sounds/boxBreak.wav')
     self.boxAppearSound = pygame.mixer.Sound('assets/sounds/boxAppearing.wav')
     self.docCollectSound = pygame.mixer.Sound('assets/sounds/docFetched.wav')
-
+    self.bryanSound = pygame.mixer.Sounds('assets/sounds/codeReviewBryanSong.wav')
+    self.playerDamageSound = pygame.mixer.Sounds('assets/sounds/playerDamage.wav')
     # initialize Hp bar
     self.hp = Hp(GLOBAL.HOMEBOT_HEALTH) # the full health is 760
 
@@ -249,8 +252,10 @@ class Game:
         c.moveToTarget()
       if self.player.getAttack() and self.player.getRect().colliderect(c.getRect()):
         self.comps.remove(c)
+        self.beatEnemySound.play()
       elif self.player.getRect().colliderect(c.getRect()):
         self.player.getHit()
+        self.playerDamageSound.play()
 
   def updateHomebot(self):
     if self.player.getRect().colliderect(self.homeBot.getRect()):
