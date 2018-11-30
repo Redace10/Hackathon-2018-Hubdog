@@ -16,7 +16,7 @@ class Hp:
     def updateHealth(self, value):
         # here we need to figure out a logic of how 
         # HP bar decreases over time
-        self.health = self.health - value
+        self.health = self.health + value
     
     def setGameDisplay(self, gameDisplay):
         self.gameDisplay = gameDisplay
