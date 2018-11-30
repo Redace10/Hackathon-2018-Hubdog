@@ -7,4 +7,4 @@ Alex,100
 yoninja,49
 gyrrehjk,49
 azghjjj,49
-zx,0
+etl,0

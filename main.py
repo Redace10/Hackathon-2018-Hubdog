@@ -141,6 +141,9 @@ class Game:
           self.player.setMoveDown(True)
         if event.key == pygame.K_SPACE:
           self.player.setAttack(True)
+      elif event.type == pygame.KEYDOWN and self.postGame == True and self.display.showKeyboard == False:
+        if event.key == pygame.K_SPACE:
+          self.reset()
         
       elif event.type == pygame.KEYUP:
         if event.key == pygame.K_LEFT:
