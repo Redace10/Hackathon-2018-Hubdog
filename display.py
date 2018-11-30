@@ -62,6 +62,10 @@ class Display:
 
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
+    # Competitor Assets
+    comp = pygame.image.load('assets/enemy/veryfi.png')
+    self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
+    
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
 
@@ -84,6 +88,10 @@ class Display:
   def drawDocuments(self, docs):
     for d in docs:
       self.gameDisplay.blit(self.documents[d.getFormat()], d.getRect())
+
+  def drawComps(self, comps):
+    for c in comps:
+      self.gameDisplay.blit(self.comp, c.getRect())
 
   def drawDog(self, dog):
     # self.gameDisplay.blit(self.map, (0, 0))

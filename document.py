@@ -5,6 +5,13 @@ class Document:
     self.__spread = False
     self.__spreadCounter = 0
     self.__endTime = 0
+    self.__targeted = False
+
+  def getTargeted(self):
+    return self.__targeted
+
+  def setTargeted(self, value):
+    self.__targeted = value
 
   def getSpread(self):
     return self.__spread

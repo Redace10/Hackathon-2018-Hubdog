@@ -7,6 +7,7 @@ import GLOBAL
 from display import Display
 from player import Player
 from box import Box
+from competitor import Competitor
 
 class Game:
   def __init__(self):
@@ -24,6 +25,7 @@ class Game:
     self.initializeBoxes()
     self.docs = []
     self.docDuration = 7000
+    self.initializeCompetitors()
 
     # initialize player
     self.player = Player(GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT, GLOBAL.PLAYER_SPEED, 0)
@@ -39,6 +41,8 @@ class Game:
 
       if event.type == self.boxSpawnEvent:
         self.spawnBox()
+      if event.type == self.compSpawnEvent:
+        self.spawnCompetitors()
 
       if event.type == pygame.KEYDOWN and game.player.getAttack() == False:
         if event.key == pygame.K_LEFT:
@@ -126,9 +130,27 @@ class Game:
     #self.boxes.append(Box('B', 'bmo', (40, 40, BOX_WIDTH, BOX_HEIGHT)))
     pygame.time.set_timer(self.boxSpawnEvent, self.boxSpawnFrequency)
 
+  def initializeCompetitors(self):
+    self.comps = []
+    self.compSpawnRate = 1
+    self.compSpawnFrequency = 4000
+    self.compSpawnEvent = pygame.USEREVENT + 2
+    pygame.time.set_timer(self.compSpawnEvent, self.compSpawnFrequency)
+
+  def spawnCompetitors(self):
+    for i in range(self.compSpawnRate):
+      rect = pygame.Rect(10, 10, GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT)
+      self.comps.append(Competitor('veryfi', rect, GLOBAL.COMP_SPEED))
+
+  def updateCompetitors(self):
+    for c in self.comps:
+      if c.selectTarget(self.docs):
+        c.moveToTarget()
+
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
     self.display.drawBoxes(self.boxes)
+    self.display.drawComps(self.comps)
     self.display.drawDocuments(self.docs)
     #pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
     self.display.drawDog(self.player)
@@ -141,6 +163,7 @@ class Game:
 
 game = Game()
 while game.keepPlaying:
+  game.updateCompetitors()
   game.updateBoxes()
   game.updateDocuments()
 
