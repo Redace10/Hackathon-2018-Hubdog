@@ -1,10 +1,6 @@
 import pygame
 import vkeyboard
 
-CHEQUE_WIDTH = 30
-CHEQUE_HEIGHT = 15
-DOC_WIDTH = 20
-DOC_HEIGHT = 40
 RED = (255,0,0)
 GREEN = (0, 200, 0)
 BLUE = (0, 0, 255)
@@ -14,12 +10,12 @@ DARK_GREEN = (0, 175, 0)
 WHITE = (255, 255, 255)
 GRAY = (150, 150, 150)
 DARK_GRAY = (128, 128, 128)
-WIDTH = 1000
-HEIGHT = 800
+
+import GLOBAL
 
 class Display:
-  def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
-    self.border = (0, 10, mapWidth, mapHeight - 50)
+  def __init__(self, pygame):
+    self.fontObj = pygame.font.Font('assets/PressStart2P.ttf', 20)
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
@@ -35,53 +31,56 @@ class Display:
 
     left1 = pygame.image.load('assets/move/left1.png')
     left2 = pygame.image.load('assets/move/left2.png')
-    left1 = pygame.transform.scale(left1, (playerWidth, playerHeight))
-    left2 = pygame.transform.scale(left2, (playerWidth, playerHeight))
+    left1 = pygame.transform.scale(left1, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
+    left2 = pygame.transform.scale(left2, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
 
     right1 = pygame.image.load('assets/move/right1.png')
     right2 = pygame.image.load('assets/move/right2.png')
-    right1 = pygame.transform.scale(right1, (playerWidth, playerHeight))
-    right2 = pygame.transform.scale(right2, (playerWidth, playerHeight))
+    right1 = pygame.transform.scale(right1, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
+    right2 = pygame.transform.scale(right2, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
 
     attack1 = pygame.image.load('assets/attack/attackLeft.png')
     attack2 = pygame.image.load('assets/attack/attackRight.png')
-    attack1 = pygame.transform.scale(attack1, (playerWidth, playerHeight))
-    attack2 = pygame.transform.scale(attack2, (playerWidth, playerHeight))
+    attack1 = pygame.transform.scale(attack1, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
+    attack2 = pygame.transform.scale(attack2, (GLOBAL.PLAYER_WIDTH, GLOBAL.PLAYER_HEIGHT))
 
     # box assets:
     amex = pygame.image.load('assets/bigBank/amex.png')
-    amex = pygame.transform.scale(amex, (boxWidth, boxHeight))
+    amex = pygame.transform.scale(amex, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     bmo = pygame.image.load('assets/bigBank/bmo.png')
-    bmo = pygame.transform.scale(bmo, (boxWidth, boxHeight))
+    bmo = pygame.transform.scale(bmo, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     chase = pygame.image.load('assets/bigBank/chase.png')
-    chase = pygame.transform.scale(chase, (boxWidth, boxHeight))
+    chase = pygame.transform.scale(chase, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     td = pygame.image.load('assets/bigBank/td.png')
-    td = pygame.transform.scale(td, (boxWidth, boxHeight))
+    td = pygame.transform.scale(td, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     wellsFargo = pygame.image.load('assets/bigBank/wellsFargo.png')
-    wellsFargo = pygame.transform.scale(wellsFargo, (boxWidth, boxHeight))
+    wellsFargo = pygame.transform.scale(wellsFargo, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     bigBanks = {'amex':amex, 'bmo':bmo, 'chase':chase, 'td':td, 'wellsFargo':wellsFargo}
     
     fido = pygame.image.load('assets/smallBank/fido.png')
-    fido = pygame.transform.scale(fido, (boxWidth, boxHeight))
+    fido = pygame.transform.scale(fido, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     tangerine = pygame.image.load('assets/smallBank/tangerine.png')
-    tangerine = pygame.transform.scale(tangerine, (boxWidth, boxHeight))
+    tangerine = pygame.transform.scale(tangerine, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     telstra = pygame.image.load('assets/smallBank/telstra.png')
-    telstra = pygame.transform.scale(telstra, (boxWidth, boxHeight))
+    telstra = pygame.transform.scale(telstra, (GLOBAL.BOX_WIDTH, GLOBAL.BOX_HEIGHT))
     smallBanks = {'fido':fido, 'tangerine':tangerine, 'telstra':telstra}
 
     self.banks = {'B':bigBanks, 'S':smallBanks}
 
     # Document assets
     cheque = pygame.image.load('assets/document/cheque.png')
-    cheque = pygame.transform.scale(cheque, (CHEQUE_WIDTH, CHEQUE_HEIGHT))
+    cheque = pygame.transform.scale(cheque, (GLOBAL.CHEQUE_WIDTH, GLOBAL.CHEQUE_HEIGHT))
     invoice = pygame.image.load('assets/document/invoice.png')
-    invoice = pygame.transform.scale(invoice, (DOC_WIDTH, DOC_HEIGHT))
+    invoice = pygame.transform.scale(invoice, (GLOBAL.DOC_WIDTH, GLOBAL.DOC_HEIGHT))
     pdf = pygame.image.load('assets/document/pdf.png')
-    pdf = pygame.transform.scale(pdf, (DOC_WIDTH, DOC_HEIGHT))
+    pdf = pygame.transform.scale(pdf, (GLOBAL.DOC_WIDTH, GLOBAL.DOC_HEIGHT))
 
     self.documents = {'cheque':cheque, 'invoice':invoice, 'pdf':pdf}
 
     self.inserted = False
+    # Competitor Assets
+    comp = pygame.image.load('assets/enemy/veryfi.png')
+    self.comp = pygame.transform.scale(comp, (GLOBAL.COMP_WIDTH, GLOBAL.COMP_HEIGHT))
 
     # map
     # self.map = pygame.image.load('assets/boss battle.png')
@@ -96,17 +95,29 @@ class Display:
     self.dogImages.append(attack1)
     self.dogImages.append(attack2)
 
-    self.gameDisplay = pygame.display.set_mode((mapWidth, mapHeight))
+    self.gameDisplay = pygame.display.set_mode((GLOBAL.MAP_WIDTH, GLOBAL.MAP_HEIGHT))
 
   def drawBoxes(self, boxes):
     for b in boxes:
       self.gameDisplay.blit(self.banks[b.getSize()][b.getLogo()], b.getRect())
+  
+  # pass in the hp class into this function
+  def drawHp(self, hp, hpValue):
+    hp.setGameDisplay(self.gameDisplay)
+    hp.healthBarMain(hpValue)
+  
+  def drawHomeBot(self,homeBot):
+    homeBot.setGameDisplay(self.gameDisplay)
 
   def drawDocuments(self, docs):
     for d in docs:
       self.gameDisplay.blit(self.documents[d.getFormat()], d.getRect())
 
-  def drawDog(self, dog):
+  def drawComps(self, comps):
+    for c in comps:
+      self.gameDisplay.blit(self.comp, c.getRect())
+
+  def drawDog(self, dog, cooldownevent):
     # self.gameDisplay.blit(self.map, (0, 0))
     if (self.dogIndex == 19):
       self.dogIndex = 0
@@ -119,25 +130,16 @@ class Display:
     if (dog.getMoveLeft() or dog.getMoveRight() or dog.getMoveUp() or dog.getMoveDown()):
       self.dogIndex += 1
     
-    dog.getRect().clamp_ip(self.border)
     if (dog.getAttack()):
       if (self.dogFace == 0):
         dogImage = self.dogImages[2]
       elif(self.dogFace == 1):
         dogImage = self.dogImages[3]
-      dog.attack(self.dogFace)
+      dog.attack(self.dogFace, cooldownevent)
       self.gameDisplay.blit(dogImage, (dog.getRect().x, dog.getRect().y))
     else:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
-
-  def drawDisplay(self, pygame):
-    pygame.draw.rect(self.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-    self.drawBoxes(game.boxes)
-    self.drawDocuments(game.docs)
-    pygame.draw.rect(self.gameDisplay, (0, 0, 255), game.player.getRect())
-    self.drawDog(game.player)
-    pygame.display.update()
 
   def showEnterUsername(self, leaderboard, keyboard, text):
     enterUsername = True
@@ -148,13 +150,17 @@ class Display:
     if (enterUsername):
       if (not vkeyboard.FINISHED):
         keyboard.draw()
+        print('blah')
         spacing = 225
         for index in range(8):
-          self.draw_word("_", spacing, 250, ((RED, RED)), self.fontHighScore)
+          print('here')
+          self.drawWord("_", spacing, 250, ((RED, RED)), self.fontHighScore)
           if (index < len(text)):
-            self.draw_word(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
+            print('last if')
+            self.drawWord(text[index], spacing, 220, ((RED, RED)), self.fontHighScore)
           spacing += 75
       if (vkeyboard.FINISHED and not self.inserted):
+        print('if 3')
         if (len(leaderboard.getScoreList()) <= leaderboard.getMaxList()):
           del leaderboard.getScoreList()[-1]
         leaderboard.setUsername(text)
@@ -166,20 +172,22 @@ class Display:
 
     
   def showLeaderboard(self, leaderboard):
-    self.draw_word("HIGH SCORES", WIDTH-WIDTH/2, 50, ((RED, RED)), self.fontHighScore)
-    self.draw_word("RANK", 100, 100, ((YELLOW, YELLOW)), self.fontColumn)
-    self.draw_word("SCORE", 500, 100, ((YELLOW, YELLOW)), self.fontColumn)
-    self.draw_word("NAME", 900, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.drawWord("HIGH SCORES", GLOBAL.MAP_WIDTH/2, 50, ((RED, RED)), self.fontHighScore)
+    self.drawWord("RANK", 100, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.drawWord("SCORE", 500, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.drawWord("NAME", 900, 100, ((YELLOW, YELLOW)), self.fontColumn)
     spacing = 150
     rank = 1
     for score in leaderboard.getScoreList():
-      self.draw_word(rank, 100, spacing, ((WHITE, DARK_GREEN)), self.fontData)
-      self.draw_word(score["score"], 500, spacing, ((WHITE, DARK_GREEN)), self.fontData)
-      self.draw_word(score["name"], 900, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.drawWord(rank, 100, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.drawWord(score["score"], 500, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.drawWord(score["name"], 900, spacing, ((WHITE, DARK_GREEN)), self.fontData)
       spacing += 50
       rank += 1
 
-  def draw_word(self, text, x, y, colours, font):
+  def drawWord(self, text, x, y, colours, font=None):
+    if font == None:
+      font = self.fontObj
     word_surface = font.render(str(text), True, colours[0])
     word_rect = word_surface.get_rect()
     word_rect.center  = (x, y)
@@ -202,8 +210,5 @@ class Display:
     self.gameDisplay.blit(word_outline, outline_rect)
     outline_rect.center = (x, y + 2)
     self.gameDisplay.blit(word_outline, outline_rect)
-      
     self.gameDisplay.blit(word_surface, word_rect)
     return word_rect
-    
-
