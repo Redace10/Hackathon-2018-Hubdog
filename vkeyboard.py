@@ -82,8 +82,8 @@ class VKeyboardRenderer(object):
         """
         if isinstance(key, VSpaceKey):
             self.draw_space_key(surface, key)
-        elif isinstance(key, VBackKey):
-            self.draw_back_key(surface, key)
+        # elif isinstance(key, VBackKey):
+        #     self.draw_back_key(surface, key)
         elif isinstance(key, VUppercaseKey):
             self.draw_uppercase_key(surface, key)
         elif isinstance(key, VSpecialCharKey):
@@ -240,9 +240,17 @@ class VSpaceKey(VKey):
 class VBackKey(VKey):
     """ Custom key for back. """
 
-    def __init__(self):
+    def __init__(self, length):
         """ Default constructor. """
-        VKey.__init__(self, u'\u21a9')
+        VKey.__init__(self, u'Delete')
+        self.length = length
+
+    def set_size(self, size):
+        """Sets the size of this key.
+        
+        :param size: Size of this key.
+        """
+        self.size = (size * self.length, size)
     
     def update_buffer(self, buffer):
         """Text update method. Removes last character.
@@ -414,10 +422,20 @@ class VKeyboardLayout(object):
         self.allow_space = allow_space
         self.allow_uppercase = allow_uppercase
         self.allow_special_chars = allow_special_chars
+        self.KEYBOARD = [
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+            ['a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+            ['q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm'],
+            ['w', 'x', 'c', 'v', 'b', 'n', 'Delete'],
+            ['Space'],
+        ]
+        self.keyIndex = [0,0]
         for model_row in model:
             row = VKeyRow()
             for value in model_row:
                 row.add_key(VKey(value))
+                if (value == 'n'):
+                    row.add_key(VBackKey(4.2))
             self.rows.append(row)
         self.max_length = len(max(self.rows, key=len))
         if self.max_length == 0:
@@ -432,7 +450,7 @@ class VKeyboardLayout(object):
         max_length = self.max_length
         i = len(self.rows) - 1
         current_row = self.rows[i]
-        special_keys = [VBackKey()]
+        special_keys = []
         if self.allow_uppercase: special_keys.append(VUppercaseKey(keyboard))
         if self.allow_special_chars: special_keys.append(VSpecialCharKey(keyboard))
         while len(special_keys) > 0:
@@ -488,7 +506,9 @@ class VKeyboardLayout(object):
         y = self.position[1] + self.padding
         max_length = self.max_length
         for row in self.rows:
-            r = len(row)
+            r = 10
+            if (len(row) == 1):
+                r = 1
             width = (r * self.key_size) + ((r + 1) * self.padding)
             x = (surface_size[0] - width) / 2
             if row.space is not None:
@@ -515,18 +535,33 @@ class VKeyboardLayout(object):
                     else:
                         key.value = key.value.lower()
 
-    def get_key_at(self, position):
+    def get_key_at(self, x, y):
         """Retrieves if any key is located at the given position
         
         :param position: Position to check key at.
         :returns: The located key if any at the given position, None otherwise.
         """
-        for row in self.rows:
-            if position in row:
-                for key in row.keys:
-                    if key.is_touched(position):
-                        return key
-        return None
+        row = self.keyIndex[0]
+        col = self.keyIndex[1]
+        row += y
+        col += x
+        if (col <= 0):
+            col = 0
+        if (col >= 9):
+            col = 9
+        if (row <= 0):
+            row = 0
+        if (row >= 4):
+            row = 4
+        if (row == 3 and col >= 6):
+            col = 6
+        if (row == 4):
+            col = 0
+        self.keyIndex = (row, col)
+        return self.rows[row].keys[col]
+
+    def default_key(self):
+        return self.rows[0].keys[0]
 
 def synchronizeLayout(primary, secondary, surface_size):
     """Synchronizes given layouts by normalizing height by using
@@ -582,7 +617,8 @@ class VKeyboard(object):
         self.special_char_layout.configure_specials_key(self)
         synchronizeLayout(self.original_layout, self.special_char_layout, self.surface.get_size())
         self.set_layout(layout)
-        #self.rect=()
+
+        self.key = self.layout.default_key()
 
     def invalidate(self):
         """ Invalidates keyboard state, reset layout and redraw. """
@@ -637,32 +673,23 @@ class VKeyboard(object):
         :param event: Event to process.
         """
         if self.state > 0:
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_LEFT:
-            #         key = self.layout.get_key_at(pygame.mouse.get_pos())
-            #         if key is not None:
-            #             self.on_key_down(key)
-                # elif event.key == pygame.K_RIGHT:
-                #     game.player.setMoveRight(True)
-                # elif event.key == pygame.K_UP:
-                #     game.player.setMoveUp(True)
-                # elif event.key == pygame.K_DOWN:
-                #     game.player.setMoveDown(True)
-                # elif event.key == pygame.K_SPACE:
-                #     game.player.setAttack(True)
-
-            if event.type == MOUSEBUTTONDOWN:
-                key = self.layout.get_key_at(pygame.mouse.get_pos())
-                if key is not None:
-                    self.on_key_down(key)
-            elif event.type == MOUSEBUTTONUP:
-                self.on_key_up()
-            elif event.type == KEYDOWN:
-                value = pygame.key.name(event.key)
-                # TODO : Find from layout (consider checking layout key space ?)
-            elif event.type == KEYUP:
-                value = pygame.key.name(event.key)
-                # TODO : Find from layout (consider checking layout key space ?)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.on_key_up()
+                    self.key = self.layout.get_key_at(-1, 0)
+                elif event.key == pygame.K_RIGHT:
+                    self.on_key_up()
+                    self.key = self.layout.get_key_at(1, 0)
+                elif event.key == pygame.K_UP:
+                    self.on_key_up()
+                    self.key = self.layout.get_key_at(0, -1)
+                elif event.key == pygame.K_DOWN:
+                    self.on_key_up()
+                    self.key = self.layout.get_key_at(0, 1)
+                elif event.key == pygame.K_SPACE:
+                    self.pressed_space()
+                
+            self.on_key_down(self.key)
                 
     def set_key_state(self, key, state):
         """Sets the key state and redraws it.
@@ -685,6 +712,9 @@ class VKeyboard(object):
         """ Process key up event by updating buffer and release key. """
         if (self.last_pressed is not None):
             self.set_key_state(self.last_pressed, 0)
-            self.buffer = self.last_pressed.update_buffer(self.buffer)
-            self.text_consumer(self.buffer)
-            self.last_pressed = None
+
+    def pressed_space(self):
+        """ Process key up event by updating buffer and release key. """
+        self.buffer = self.last_pressed.update_buffer(self.buffer)
+        self.text_consumer(self.buffer)
+        self.last_pressed = None
