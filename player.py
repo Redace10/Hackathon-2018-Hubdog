@@ -3,16 +3,25 @@ class Player:
     self.__width = width
     self.__height = height
     self.__speed = speed
+    self.__initialSpeed = speed
     
     self.__directionX = 0  # 0 = left, 1 = right
     self.__directionY = 0  # 0 = up, 1 = down
 
-    self.__rect = (width, height)
+    self.__rect = None
 
     self.__moveLeft = False
     self.__moveRight = False
     self.__moveUp = False
     self.__moveDown = False
+
+    self.__attack = False
+    self.__attcounter = 0
+
+    self.__moveX = 0
+    self.__moveY = 0
+
+    self.__collectedDocs = 0
 
   def setWidth(self, value):
     self.__width = value
@@ -49,7 +58,20 @@ class Player:
 
   def getRect(self):
     return self.__rect
+
+  def setAttack(self, value):
+    self.__attack = value
+
+  def getAttack(self):
+    return self.__attack
+
+  def collectDoc(self):
+    self.__collectedDocs += 1
+
+  def getCollectedDocs(self):
+    return self.__collectedDocs
   
+  # move directions
   def setMoveLeft(self, value):
     self.__moveLeft = value
 
@@ -61,7 +83,13 @@ class Player:
 
   def setMoveDown(self, value):
     self.__moveDown = value
-  
+
+  def setAllMoveFalse(self):
+    self.__moveLeft = False
+    self.__moveRight = False
+    self.__moveUp = False
+    self.__moveDown = False
+
   def getMoveLeft(self):
     return self.__moveLeft
 
@@ -74,12 +102,33 @@ class Player:
   def getMoveDown(self):
     return self.__moveDown
 
+  # movement change
   def moveX(self, dir):
-    x_change = dir * self.__speed
-    self.__rect.move_ip(x_change, 0)
+    self.__moveX = dir * self.__speed
+    self.__rect.move_ip(self.__moveX, 0)
 
   def moveY(self, dir):
-    y_change = dir * self.__speed
-    self.__rect.move_ip(0, y_change)
+    self.__moveY = dir * self.__speed
+    self.__rect.move_ip(0, self.__moveY)
 
+  def resetMoveX(self):
+    self.__moveX = 0
+
+  def resetMoveY(self):
+    self.__moveY = 0
+
+  def attack(self, dir):
+    self.__attack = True
+    self.__attcounter += 1
+    self.__speed = self.__initialSpeed * 2
+    direction = 1
+    if (dir == 0):
+      direction = -1
+    self.moveX(direction)
+    if (self.__attcounter > 5):
+      self.__speed = self.__initialSpeed
+      self.__attcounter = 0
+      self.__attack = False
+      self.resetMoveX()
+      self.resetMoveY()
   
