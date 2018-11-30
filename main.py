@@ -1,11 +1,12 @@
 import pygame
 import os
 import random
-import numpy as np
+# import numpy as np
 
 from display import Display
 from player import Player
 from box import Box
+from leaderboard import Leaderboard
 
 WIDTH = 1000
 HEIGHT = 800
@@ -39,6 +40,7 @@ class Game:
     # initialize player
     self.player = Player(PLAYER_WIDTH, PLAYER_HEIGHT, 5, 0)
     self.player.setRect(self.display.dogImages[0][0].get_rect())
+    self.leaderboard = Leaderboard()
 
     self.clock = pygame.time.Clock()
     self.keepPlaying = True
@@ -48,8 +50,8 @@ class Game:
       if event.type == pygame.QUIT:
         self.keepPlaying = False
 
-      if event.type == self.boxSpawnEvent:
-        self.spawnBox()
+      # if event.type == self.boxSpawnEvent:
+      #   self.spawnBox()
 
       if event.type == pygame.KEYDOWN and game.player.getAttack() == False:
         if event.key == pygame.K_LEFT:
@@ -100,18 +102,18 @@ class Game:
       elif self.player.getRect().colliderect(d.getRect()):
         self.docs.remove(d)
 
-  def spawnBox(self):
-    for i in range(self.boxSpawnRate):
-      size = np.random.choice(['B', 'S'], 1, replace=False, p=[self.bigBoxChance, self.smallBoxChance])[0]
-      logo = random.randint(0, len(self.banks[size]) - 1)
-      while True:
-        randX = random.randint(10, WIDTH - 10 - BOX_WIDTH)
-        randY = random.randint(10, HEIGHT - 10 - BOX_HEIGHT)
-        rect = pygame.Rect(randX, randY, BOX_WIDTH, BOX_HEIGHT)
-        box_rects = list(map(lambda b: b.getRect(), self.boxes))
-        if (rect.collidelist(box_rects) < 0):
-          self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
-          break
+  # def spawnBox(self):
+  #   for i in range(self.boxSpawnRate):
+  #     size = np.random.choice(['B', 'S'], 1, replace=False, p=[self.bigBoxChance, self.smallBoxChance])[0]
+  #     logo = random.randint(0, len(self.banks[size]) - 1)
+  #     while True:
+  #       randX = random.randint(10, WIDTH - 10 - BOX_WIDTH)
+  #       randY = random.randint(10, HEIGHT - 10 - BOX_HEIGHT)
+  #       rect = pygame.Rect(randX, randY, BOX_WIDTH, BOX_HEIGHT)
+  #       box_rects = list(map(lambda b: b.getRect(), self.boxes))
+  #       if (rect.collidelist(box_rects) < 0):
+  #         self.boxes.append(Box(size, self.banks[size][logo], rect, self.boxDuration))
+  #         break
 
   def initializeBoxes(self):
     bigBanks = ['amex', 'bmo', 'chase', 'td', 'wellsFargo']
@@ -131,10 +133,11 @@ class Game:
 
   def updateDisplay(self):
     pygame.draw.rect(self.display.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-    self.display.drawBoxes(self.boxes)
-    self.display.drawDocuments(self.docs)
-    pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
-    self.display.drawDog(self.player)
+    # self.display.drawBoxes(self.boxes)
+    # self.display.drawDocuments(self.docs)
+    # pygame.draw.rect(self.display.gameDisplay, (0, 0, 255), self.player.getRect())
+    # self.display.drawDog(self.player)
+    self.display.showLeaderboard(self.leaderboard)
     pygame.display.update()
 
   def __del__(self):
@@ -142,13 +145,14 @@ class Game:
 
 game = Game()
 while game.keepPlaying:
-  game.updateBoxes()
-  game.updateDocuments()
+  # game.updateBoxes()
+  # game.updateDocuments()
 
   game.updateDisplay()
   
   game.handleEvents()
-
+  
   game.clock.tick(30)
+  
 
 quit()

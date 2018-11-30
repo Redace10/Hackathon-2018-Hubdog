@@ -4,6 +4,17 @@ CHEQUE_WIDTH = 30
 CHEQUE_HEIGHT = 15
 DOC_WIDTH = 20
 DOC_HEIGHT = 40
+RED = (255,0,0)
+GREEN = (0, 200, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+BLACK = (0, 0, 0)
+DARK_GREEN = (0, 175, 0)
+WHITE = (255, 255, 255)
+GRAY = (150, 150, 150)
+DARK_GRAY = (128, 128, 128)
+WIDTH = 1000
+HEIGHT = 800
 
 class Display:
   def __init__(self, pygame, playerWidth, playerHeight, mapWidth, mapHeight, boxWidth, boxHeight):
@@ -11,6 +22,10 @@ class Display:
     self.dogImages = []
     self.dogIndex = 0
     self.dogFace = 0
+
+    self.fontHighScore = pygame.font.Font('assets/PressStart2P.ttf', 50)
+    self.fontColumn = pygame.font.Font('assets/PressStart2P.ttf', 30)
+    self.fontData = pygame.font.Font('assets/PressStart2P.ttf', 20)
 
     leftImages = []
     rightImages = []
@@ -113,12 +128,57 @@ class Display:
       dogImage = self.dogImages[self.dogFace][self.dogIndex//10]
       self.gameDisplay.blit(dogImage, dog.getRect())
 
-    def drawDisplay(self, pygame):
-      pygame.draw.rect(self.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
-      self.drawBoxes(game.boxes)
-      self.drawDocuments(game.docs)
-      pygame.draw.rect(self.gameDisplay, (0, 0, 255), game.player.getRect())
-      self.drawDog(game.player)
-      pygame.display.update()
+  def drawDisplay(self, pygame):
+    pygame.draw.rect(self.gameDisplay, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    self.drawBoxes(game.boxes)
+    self.drawDocuments(game.docs)
+    pygame.draw.rect(self.gameDisplay, (0, 0, 255), game.player.getRect())
+    self.drawDog(game.player)
+    pygame.display.update()
+
+  def showLeaderboard(self, leaderboard):
+    if (not leaderboard.getReadLeaderboard()):
+      leaderboard.updateLeaderboard()
+      leaderboard.setReadLeaderboard(True)
+
+    self.draw_word("HIGH SCORES", WIDTH-WIDTH/2, 50, ((RED, RED)), self.fontHighScore)
+    self.draw_word("RANK", 100, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.draw_word("SCORE", 500, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    self.draw_word("NAME", 900, 100, ((YELLOW, YELLOW)), self.fontColumn)
+    spacing = 150
+    rank = 1
+    for score in leaderboard.getScoreList():
+      self.draw_word(rank, 100, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.draw_word(score["score"], 500, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      self.draw_word(score["name"], 900, spacing, ((WHITE, DARK_GREEN)), self.fontData)
+      spacing += 50
+      rank += 1
+
+  def draw_word(self, text, x, y, colours, font):
+    word_surface = font.render(str(text), True, colours[0])
+    word_rect = word_surface.get_rect()
+    word_rect.center  = (x, y)
+
+    word_outline = font.render(str(text), True, colours[1])
+    outline_rect = word_outline.get_rect()
+    outline_rect.center = (x - 1, y)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x + 1, y)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x - 1, y - 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x - 1, y + 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x + 1, y - 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x + 1, y + 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x, y - 1)
+    self.gameDisplay.blit(word_outline, outline_rect)
+    outline_rect.center = (x, y + 2)
+    self.gameDisplay.blit(word_outline, outline_rect)
+      
+    self.gameDisplay.blit(word_surface, word_rect)
+    return word_rect
     
 

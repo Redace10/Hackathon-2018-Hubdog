@@ -1,12 +1,13 @@
 import os
 
-class Score:
+class Leaderboard:
   def __init__(self):
-    self.__score = 11
+    self.__score = 1
     self.__username = "Hamzah"
     self.__filename = "leaderboard.txt"
     self.__listScores = []
     self.__maxList = 10
+    self.__readLeaderboard = False
 
   def setScore(self, value):
     self.__score = value
@@ -19,6 +20,15 @@ class Score:
 
   def getUsername(self):
     return self.__username
+
+  def setReadLeaderboard(self, value):
+    self.__readLeaderboard = value
+
+  def getReadLeaderboard(self):
+    return self.__readLeaderboard
+
+  def getScoreList(self):
+    return self.__listScores
 
   def enterUsername(self):
     print("we need to implement this")
@@ -35,8 +45,6 @@ class Score:
       if (len(self.__listScores) == self.__maxList):
         del self.__listScores[-1]
       self.insertScore()
-
-    self.showTop10()
 
   def readScore(self):
     if not os.path.exists(self.__filename):
@@ -68,9 +76,7 @@ class Score:
       file.write(self.__username+","+ str(self.__score) + "\n")
     file.close()
 
-  def showTop10(self):
-    print("aaaa")
 
-score = Score()
-score.updateLeaderboard()
+# score = Score()
+# score.updateLeaderboard()
 
