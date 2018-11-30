@@ -146,7 +146,6 @@ class Game:
     axis0 = self.joystick.get_axis( 0 )
     buttonA = self.joystick.get_button( 0 )
     buttonB = self.joystick.get_button( 1 )
-    print(GLOBAL.CURRENT_DIR)
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         self.keepPlaying = False
@@ -263,7 +262,7 @@ class Game:
           self.player.removePowerup()
       
       if (self.display.showKeyboard):
-        self.keyboard.on_event(event)
+        self.keyboard.on_event(event, axis1, axis0, buttonA)
 
     if (self.player.getMoveLeft()):
       self.player.moveX(-1)
