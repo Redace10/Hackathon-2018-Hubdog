@@ -2,9 +2,9 @@ import os
 
 class Score:
   def __init__(self):
-    self.__score = 10
+    self.__score = 11
     self.__username = "Hamzah"
-    self.__filename = "hamzahZia"
+    self.__filename = "leaderboard.txt"
     self.__listScores = []
     self.__maxList = 10
 
@@ -39,7 +39,10 @@ class Score:
     self.showTop10()
 
   def readScore(self):
-    file = open(self.__filename, 'r+')
+    if not os.path.exists(self.__filename):
+      file = open(self.__filename, 'a+')
+    else:
+      file = open(self.__filename, 'r+')
     lines = file.readlines()
     file.close()
 
