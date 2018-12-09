@@ -17,6 +17,14 @@ The following game cabinet was built, (with built in rasberry pi) to act as retr
 ![Alt text](/screenshot/controller2.PNG)
 
 # Screenshot:
+![Alt text](/screenshot/gameplay.PNG)
+
+![Alt text](/screenshot/gameplay2.PNG)
+
+![Alt text](/screenshot/keyboard.PNG)
+
+![Alt text](/screenshot/leaderboard.PNG)
+
 
 # Commit Rule [VERY IMPORTANT]
 
