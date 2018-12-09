@@ -11,7 +11,10 @@ Hubdoc themed arcade game, built with arcade cabinet, leaderboards and all that 
 
 # Game Cabinet
 The following game cabinet was built, (with built in rasberry pi) to act as retro style gaming console:
-![Game Cabinet](https://res.cloudinary.com/dsdo8bq2t/image/upload/a_auto_right,c_scale,w_2082/v1543781701/IMG_3297.jpg)
+![Game Cabinet](/screenshot/controller)
+![Game Cabinet](/screenshot/controller2)
+
+# Screenshot:
 
 # Commit Rule [VERY IMPORTANT]
 
