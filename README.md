@@ -6,6 +6,8 @@ Group members: Andrew, Hamzah, Binil, Aman, Alex, Terry
 # Installation
 Game has been loaded on SD card, and is playable on rasberryPi inserted in built game controller/cabinet, but if wish to run game locally on machine: `pip install pygame` and `pip install numpy`, then `python main.py`. *Note: Joystick must be plugged in through usb to run*.
 
+If you want to play the game using the Joystick, come to Hubdoc ;)
+
 # Description
 Hubdoc themed arcade game, built with arcade cabinet, leaderboards and all that good stuff. Theme would be a dog sprite attempting to fetch documents, to gain points. Retrieving documents before our competitors, remapping of keys to resemble when sites change, incorporate captchas, 2Fa, all the problems we encounters on a daily basis building robots.
 
