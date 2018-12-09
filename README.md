@@ -1,7 +1,7 @@
 # Hackathon-2018-Hubdog
 
 # Description
-Hubdoc themed arcade game, built with arcade cabinet, leaderboards and all that good stuff. Theme would be a dog sprite attempting to fetch documents, to gain points. Retrieving documents before our competitors, remapping of keys to resemble when sites change, incorporate captchas, 2Fa, all the problems we encounters on a daily basis building robots.
+This is a Hubdoc themed arcade game, built with an arcade cabinet, which we made in a span of two days for our internal company hackathon project. The game is about a hubdog attempting to fetch documents to gain points. There is a health bar that gradually decreases over time. The only way for it to increase is to fetch documents and bring it back to the home bot. It is game over once the health bar reaches zero. You must retrieve documents before our competitors and try to survive as long as you can!
 
 # Codbuh
 Group members: 
@@ -17,6 +17,8 @@ Group members:
 - arcade cabinet (built with rasberry pi)
 - virtual keyboard for you to enter your username
 - leaderboard for top 10 high scores
+- banks spawn randomly on the screen
+- documents come out of bank once the bank gets destroyed
 - Bryan Power-up. When activated, he will get all the documents on the screen for you
 - Veryfi enemy. They either try to take documents on the screen or directly steal documents from you by attacking you
 
