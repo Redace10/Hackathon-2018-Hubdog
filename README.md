@@ -1,7 +1,13 @@
 # Hackathon-2018-Hubdog
 
 # Codbuh
-Group members: Andrew, Hamzah, Binil, Aman, Alex, Terry
+Group members: 
+- [Andrew Lee](https://github.com/Redace10)
+- [Hamzah Zia](https://github.com/HamzahZia)
+- [Binil Pokhrel](https://github.com/binilpokhrel)
+- [Aman Brar](https://github.com/amanbrar1999)
+- [Alex Zhao](https://github.com/jzalexzhao)
+- [Terry Tong](https://github.com/TianyiTong123)
 
 # Installation
 Game has been loaded on SD card, and is playable on rasberryPi inserted in built game controller/cabinet, but if wish to run game locally on machine: `pip install pygame` and `pip install numpy`, then `python main.py`. *Note: Joystick must be plugged in through usb to run*.
