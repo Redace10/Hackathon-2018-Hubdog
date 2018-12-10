@@ -44,15 +44,3 @@ The following game cabinet was built, (with built in rasberry pi) to act as retr
 
 ![Alt text](/screenshot/leaderboard.PNG)
 
-
-# Commit Rule [VERY IMPORTANT]
-
-Every commit must have the following co-authors:
-```
-Co-authored-by: Andrew <andrew.lee@hubdoc.com>
-Co-authored-by: Hamzah <hamzah.zia@hubdoc.com>
-Co-authored-by: Binil <binil.pokhrel@hubdoc.com>
-Co-authored-by: Aman <aman.brar@hubdoc.com>
-Co-authored-by: Alex <alex.zhao@hubdoc.com>
-Co-authored-by: Terry <terry.tong@hubdoc.com>
-```
